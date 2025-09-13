@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://whatmobile.example.com
+
+# Sitemaps
+Sitemap: https://whatmobile.example.com/sitemap.xml
+Sitemap: https://whatmobile.example.com/server-sitemap.xml
