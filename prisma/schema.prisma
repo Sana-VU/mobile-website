@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  phones    Phone[]
+}
+
+model Phone {
+  id          Int     @id @default(autoincrement())
+  name        String
+  brandId     Int
+  brand       Brand   @relation(fields: [brandId], references: [id])
+  ramGB       Int
+  storageGB   Int
+  fiveG       Boolean
+  batteryMAh  Int
+  displayInch Float
+  releaseYear Int
+  vendorPrices VendorPrice[]
+  comparisonsAsA Comparison[] @relation("ComparisonA")
+  comparisonsAsB Comparison[] @relation("ComparisonB")
+
+  @@index([brandId])
+  @@index([ramGB])
+  @@index([fiveG])
+}
+
+model Vendor {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  prices    VendorPrice[]
+}
+
+model VendorPrice {
+  id        Int     @id @default(autoincrement())
+  phoneId   Int
+  vendorId  Int
+  price     Int
+  phone     Phone   @relation(fields: [phoneId], references: [id])
+  vendor    Vendor  @relation(fields: [vendorId], references: [id])
+
+  @@index([price])
+}
+
+model Comparison {
+  id        Int     @id @default(autoincrement())
+  phoneAId  Int
+  phoneBId  Int
+  phoneA    Phone   @relation("ComparisonA", fields: [phoneAId], references: [id])
+  phoneB    Phone   @relation("ComparisonB", fields: [phoneBId], references: [id])
+  createdAt DateTime @default(now())
+}

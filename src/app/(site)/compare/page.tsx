@@ -1,11 +1,62 @@
 import { Metadata } from "next";
+import { db } from "@/lib/db";
+import { PhoneWithBrand } from "@/types/models";
+import { CompareClient } from "@/components/compare/compare-client";
 
 export const metadata: Metadata = {
   title: "Compare Phones - WhatMobile",
   description: "Compare specifications of multiple mobile phones side by side",
 };
 
-export default function ComparePage() {
+// Fetch multiple phones by their IDs
+async function getPhonesForComparison(phoneIds: number[]) {
+  if (!phoneIds.length) return [];
+
+  const phones = await db.phone.findMany({
+    where: {
+      id: {
+        in: phoneIds,
+      },
+    },
+    include: {
+      brand: true,
+      vendorPrices: {
+        include: {
+          vendor: true,
+        },
+        orderBy: {
+          price: "asc",
+        },
+        take: 1,
+      },
+    },
+  });
+
+  // Return phones in the same order as the input IDs
+  return phoneIds
+    .map((id) => phones.find((phone: { id: number }) => phone.id === id))
+    .filter(Boolean) as PhoneWithBrand[];
+}
+
+export default async function ComparePage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  // Get phone IDs from search params (e.g. ?phones=1,2,3)
+  const phoneIdsParam = searchParams.phones
+    ? Array.isArray(searchParams.phones)
+      ? searchParams.phones[0]
+      : searchParams.phones
+    : "";
+
+  const phoneIds = phoneIdsParam
+    .split(",")
+    .map((id) => parseInt(id.trim()))
+    .filter((id) => !isNaN(id));
+
+  const phones = await getPhonesForComparison(phoneIds);
+
   return (
     <div className="container py-6">
       <h1 className="text-2xl font-bold mb-4">Compare Phones</h1>
@@ -13,15 +64,7 @@ export default function ComparePage() {
         Select phones to compare their specifications side by side
       </p>
 
-      {/* Compare feature will be implemented here */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 border rounded-lg flex items-center justify-center h-40">
-          <span className="text-muted-foreground">Select first phone</span>
-        </div>
-        <div className="p-4 border rounded-lg flex items-center justify-center h-40">
-          <span className="text-muted-foreground">Select second phone</span>
-        </div>
-      </div>
+      <CompareClient phones={phones} phoneIds={phoneIds} />
     </div>
   );
 }

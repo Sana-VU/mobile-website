@@ -14,7 +14,7 @@ const config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)", ...defaultTheme.fontFamily.sans],
+        sans: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
       },
       spacing: {
         "safe-top": "env(safe-area-inset-top)",
@@ -32,6 +32,10 @@ const config = {
         input: "var(--color-input)",
         ring: "var(--color-ring)",
         background: "var(--color-background)",
+        surface: {
+          DEFAULT: "var(--color-surface)",
+          foreground: "var(--color-surface-foreground)",
+        },
         foreground: "var(--color-foreground)",
         primary: {
           DEFAULT: "var(--color-primary)",
@@ -61,6 +65,30 @@ const config = {
           DEFAULT: "var(--color-card)",
           foreground: "var(--color-card-foreground)",
         },
+        "text-strong": "var(--text-strong)",
+        "text-muted": "var(--text-muted)",
+        "text-subtle": "var(--text-subtle)",
+      },
+      boxShadow: {
+        soft: "var(--elevation-soft)",
+        "soft-hover": "var(--elevation-soft-hover)",
+      },
+      borderRadius: {
+        none: "0px",
+        sm: "var(--radius-sm)",
+        DEFAULT: "var(--radius-md)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
+        "2xl": "calc(var(--radius-xl) + 0.5rem)",
+        "3xl": "calc(var(--radius-xl) + 1rem)",
+      },
+      transitionTimingFunction: {
+        "soft-spring": "cubic-bezier(0.22, 1, 0.36, 1)",
+      },
+      transitionDuration: {
+        "fast": "150ms",
+        "soft": "300ms",
       },
     },
   },
