@@ -65,9 +65,10 @@ const config = {
           DEFAULT: "var(--color-card)",
           foreground: "var(--color-card-foreground)",
         },
-        "text-strong": "var(--text-strong)",
-        "text-muted": "var(--text-muted)",
-        "text-subtle": "var(--text-subtle)",
+        text: {
+          strong: "var(--text-strong)",
+          subtle: "var(--text-subtle)",
+        },
       },
       boxShadow: {
         soft: "var(--elevation-soft)",
@@ -87,12 +88,10 @@ const config = {
         "soft-spring": "cubic-bezier(0.22, 1, 0.36, 1)",
       },
       transitionDuration: {
-        "fast": "150ms",
-        "soft": "300ms",
+        fast: "150ms",
+        soft: "300ms",
       },
     },
   },
-  plugins: [],
 };
-
-export default config;
+module.exports = config;

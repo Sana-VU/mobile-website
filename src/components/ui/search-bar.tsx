@@ -48,10 +48,10 @@ export function SearchBar({
     >
       <SearchIcon
         aria-hidden
-        className="h-5 w-5 flex-none text-text-subtle transition-colors group-focus-within:text-primary"
+        className="h-5 w-5 flex-none text-muted-foreground transition-colors group-focus-within:text-primary"
       />
       <input
-        className="flex-1 bg-transparent text-sm text-text-strong placeholder:text-text-subtle focus-visible:outline-none"
+        className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder={placeholder}

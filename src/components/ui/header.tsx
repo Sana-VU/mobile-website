@@ -37,7 +37,7 @@ export function Header({ className, onMenuClick }: HeaderProps) {
             <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
               WhatMobile
             </span>
-            <span className="hidden text-sm text-text-muted sm:inline">
+            <span className="hidden text-sm text-muted-foreground sm:inline">
               Discover. Compare. Decide.
             </span>
           </Link>

@@ -107,7 +107,7 @@ export default function FiltersSheet({
       params.set("page", "1");
 
       const query = params.toString();
-      router.push(query ? `${pathname}?${query}` : pathname);
+      router.push(query ? `${pathname ?? ""}?${query}` : (pathname ?? ""));
       setOpen(false);
     });
   };
@@ -146,11 +146,12 @@ export default function FiltersSheet({
         className="h-[92dvh] overflow-y-auto rounded-t-3xl border-border/80 bg-background/95 pb-safe-bottom md:h-auto md:max-w-lg md:rounded-3xl"
       >
         <SheetHeader className="sticky top-0 z-10 mb-4 bg-background/95 pb-3 pt-1 backdrop-blur">
-          <SheetTitle className="text-lg font-semibold text-text-strong">
+          <SheetTitle className="text-lg font-semibold text-foreground">
             Refine results
           </SheetTitle>
-          <SheetDescription className="text-sm text-text-muted">
-            Tailor the catalog using brand, price, performance and network filters.
+          <SheetDescription className="text-sm text-muted-foreground">
+            Tailor the catalog using brand, price, performance and network
+            filters.
           </SheetDescription>
         </SheetHeader>
 
@@ -166,8 +167,8 @@ export default function FiltersSheet({
           >
             <section className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-text-strong">Brands</h3>
-                <span className="text-xs text-text-subtle">
+                <h3 className="text-sm font-medium text-foreground">Brands</h3>
+                <span className="text-xs text-muted-foreground">
                   {selectedBrands.length} selected
                 </span>
               </div>
@@ -190,8 +191,8 @@ export default function FiltersSheet({
 
             <section className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-text-strong">Price</h3>
-                <span className="text-xs text-text-subtle">
+                <h3 className="text-sm font-medium text-foreground">Price</h3>
+                <span className="text-xs text-muted-foreground">
                   {formatPrice(priceRange_[0])} - {formatPrice(priceRange_[1])}
                 </span>
               </div>
@@ -217,7 +218,7 @@ export default function FiltersSheet({
             <Accordion type="multiple" className="space-y-3">
               <AccordionItem value="performance" className="border-none">
                 <AccordionTrigger>
-                  <span className="flex items-center gap-2 text-sm font-medium text-text-strong">
+                  <span className="flex items-center gap-2 text-sm font-medium text-foreground">
                     <SlidersHorizontal size={16} /> Performance
                   </span>
                 </AccordionTrigger>
@@ -242,7 +243,7 @@ export default function FiltersSheet({
 
               <AccordionItem value="network" className="border-none">
                 <AccordionTrigger>
-                  <span className="text-sm font-medium text-text-strong">
+                  <span className="text-sm font-medium text-foreground">
                     Network & connectivity
                   </span>
                 </AccordionTrigger>
@@ -260,18 +261,25 @@ export default function FiltersSheet({
 
               <AccordionItem value="sort" className="border-none">
                 <AccordionTrigger>
-                  <span className="text-sm font-medium text-text-strong">
+                  <span className="text-sm font-medium text-foreground">
                     Sort by
                   </span>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <Select value={sort} onValueChange={setSort}>
+                  <Select
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                  >
                     <SelectTrigger className="w-full rounded-2xl border border-border/70 bg-background/70">
-                      <SelectValue placeholder="Recommended" />
+                      <SelectValue>Recommended</SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="rounded-2xl">
-                      <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                      <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="price-asc">
+                        Price: Low to High
+                      </SelectItem>
+                      <SelectItem value="price-desc">
+                        Price: High to Low
+                      </SelectItem>
                       <SelectItem value="newest">Newest</SelectItem>
                     </SelectContent>
                   </Select>

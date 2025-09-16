@@ -41,17 +41,18 @@ export function PhoneCard({
         <CardContent className="space-y-4">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6">
             <div className="flex flex-col gap-2">
-              <span className="text-xs uppercase tracking-[0.2em] text-text-subtle">
+              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 {brand}
               </span>
               <Link
                 href={href}
-                className="text-2xl font-semibold text-text-strong transition-colors hover:text-primary"
+                className="text-2xl font-semibold text-foreground transition-colors hover:text-primary"
               >
                 {title}
               </Link>
-              <p className="max-w-xs text-sm text-text-muted">
-                Sleek design, flagship performance and battery built for modern life.
+              <p className="max-w-xs text-sm text-muted-foreground">
+                Sleek design, flagship performance and battery built for modern
+                life.
               </p>
             </div>
             {fiveG && (
@@ -64,10 +65,13 @@ export function PhoneCard({
             )}
           </div>
 
-          <dl className="grid grid-cols-2 gap-3 text-sm text-text-strong">
+          <dl className="grid grid-cols-2 gap-3 text-sm text-foreground">
             {specs.map((spec) => (
-              <div key={`${spec.label}-${spec.value}`} className="rounded-2xl bg-surface/80 px-3 py-2">
-                <dt className="text-xs uppercase tracking-wide text-text-subtle">
+              <div
+                key={`${spec.label}-${spec.value}`}
+                className="rounded-2xl bg-surface/80 px-3 py-2"
+              >
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">
                   {spec.label}
                 </dt>
                 <dd className="mt-1 font-semibold">{spec.value}</dd>
@@ -81,7 +85,9 @@ export function PhoneCard({
               {price ?? "Check price"}
             </span>
             {vendorName && (
-              <span className="text-xs text-text-subtle">from {vendorName}</span>
+              <span className="text-xs text-muted-foreground">
+                from {vendorName}
+              </span>
             )}
           </div>
           <Button asChild size="lg" className="w-full">

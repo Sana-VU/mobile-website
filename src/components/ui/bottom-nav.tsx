@@ -48,14 +48,14 @@ export function BottomNav({ pathname }: BottomNavProps) {
                   "flex w-full flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium transition-all duration-soft ease-soft-spring",
                   isActive
                     ? "bg-primary/15 text-primary"
-                    : "text-text-subtle hover:bg-accent/60 hover:text-accent-foreground"
+                    : "text-muted-foreground hover:bg-accent/60 hover:text-accent-foreground"
                 )}
               >
                 <Icon
                   aria-hidden
                   className={cn(
                     "mb-1 h-5 w-5",
-                    isActive ? "text-primary" : "text-text-muted"
+                    isActive ? "text-primary" : "text-muted-foreground"
                   )}
                 />
                 <span>{item.label}</span>

@@ -32,13 +32,13 @@ export function VendorPriceCard({
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-medium text-text-strong">{vendorName}</span>
+        <span className="text-sm font-medium text-foreground">{vendorName}</span>
         <span className="text-lg font-semibold text-primary">
           {formatPrice(price)}
         </span>
       </div>
       {updatedAt && (
-        <span className="text-xs text-text-subtle">
+        <span className="text-xs text-muted-foreground">
           Updated {updatedAt}
         </span>
       )}

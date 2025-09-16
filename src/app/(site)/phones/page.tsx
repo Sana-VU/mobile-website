@@ -59,8 +59,8 @@ export default async function PhonesPage({
             brands: Array.isArray(searchParams.brand)
               ? searchParams.brand
               : searchParams.brand
-              ? [searchParams.brand]
-              : [],
+                ? [searchParams.brand]
+                : [],
             minPrice: searchParams.minPrice
               ? parseInt(searchParams.minPrice)
               : priceStats._min.price || 0,
@@ -70,8 +70,8 @@ export default async function PhonesPage({
             ram: Array.isArray(searchParams.ram)
               ? searchParams.ram.map((r) => parseInt(r))
               : searchParams.ram
-              ? [parseInt(searchParams.ram)]
-              : [],
+                ? [parseInt(searchParams.ram)]
+                : [],
             fiveG: searchParams.fiveG === "true",
           }}
         />
@@ -148,17 +148,13 @@ async function PhonesWithFilters({
   // Determine sort order
   let orderBy;
   switch (searchParams.sort) {
-    case "price-asc":
-      orderBy = { vendorPrices: { _count: "asc" } };
-      break;
-    case "price-desc":
-      orderBy = { vendorPrices: { _count: "desc" } };
-      break;
     case "newest":
-      orderBy = { releaseYear: "desc" };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      orderBy = { releaseYear: "desc" as any };
       break;
     default:
-      orderBy = { id: "desc" };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      orderBy = { id: "desc" as any };
   }
 
   // Fetch phones with pagination and filtering

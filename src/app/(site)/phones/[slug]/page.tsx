@@ -58,6 +58,7 @@ async function getPhoneBySlug(slug: string) {
       },
     },
   });
+  return phone;
 
   return phone;
 }
@@ -140,7 +141,9 @@ export default async function PhoneDetailsPage({
   }
 
   const relatedPhones = await getRelatedPhones(phone.brand.id, phone.id);
-  const structuredData = generateProductStructuredData(phone);
+  const structuredData = generateProductStructuredData(
+    phone as PhoneWithDetails
+  );
   const lowestPrice = phone.vendorPrices[0]?.price || 0;
 
   // Determine if phone is PTA approved (for demo, we'll say 50% are)
@@ -153,6 +156,36 @@ export default async function PhoneDetailsPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(structuredData),
+        }}
+      />
+      {/* Breadcrumbs structured data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Home",
+                item: "https://whatmobile.example.com/",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Phones",
+                item: "https://whatmobile.example.com/phones",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: `${phone.brand.name} ${phone.name}`,
+                item: `https://whatmobile.example.com/phones/${params.slug}`,
+              },
+            ],
+          }),
         }}
       />
 
@@ -253,7 +286,7 @@ export default async function PhoneDetailsPage({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {phone.vendorPrices.map((vp: VendorPrice) => (
+                  {(phone.vendorPrices as VendorPrice[]).map((vp) => (
                     <div
                       key={vp.id}
                       className="flex items-center justify-between p-3 rounded-lg border hover:bg-secondary/10"
@@ -473,7 +506,7 @@ export default async function PhoneDetailsPage({
               More from {phone.brand.name}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {relatedPhones.map((relatedPhone: PhoneWithBrand) => (
+              {(relatedPhones as PhoneWithBrand[]).map((relatedPhone) => (
                 <Card key={relatedPhone.id} className="overflow-hidden">
                   <div className="h-48 bg-secondary/20 flex items-center justify-center">
                     <div className="text-muted-foreground">
@@ -493,7 +526,9 @@ export default async function PhoneDetailsPage({
                     </h3>
                     <div className="flex justify-between items-center mt-2">
                       <p className="font-medium">
-                        {formatPrice(relatedPhone.vendorPrices[0]?.price || 0)}
+                        {formatPrice(
+                          relatedPhone.vendorPrices?.[0]?.price ?? 0
+                        )}
                       </p>
                       {relatedPhone.fiveG && (
                         <Badge variant="secondary" className="ml-2">

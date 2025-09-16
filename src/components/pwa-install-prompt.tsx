@@ -12,7 +12,8 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function PwaInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -55,15 +56,23 @@ export function PwaInstallPrompt() {
         >
           <div className="flex flex-col gap-3">
             <div>
-              <p id="pwa-install-title" className="text-base font-semibold text-text-strong">
+              <p
+                id="pwa-install-title"
+                className="text-base font-semibold text-foreground"
+              >
                 Install WhatMobile
               </p>
-              <p className="text-sm text-text-muted">
-                Get a faster, app-like experience on your device with offline support.
+              <p className="text-sm text-muted-foreground">
+                Get a faster, app-like experience on your device with offline
+                support.
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => setIsVisible(false)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsVisible(false)}
+              >
                 Maybe later
               </Button>
               <Button size="sm" onClick={handleInstall}>

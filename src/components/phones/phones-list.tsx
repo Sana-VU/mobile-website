@@ -34,10 +34,10 @@ export default function PhonesList({
   );
 
   const updatePage = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() ?? "");
     params.set("page", page.toString());
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    router.push(query ? `${pathname ?? ""}?${query}` : (pathname ?? ""));
   };
 
   return (
@@ -69,7 +69,7 @@ export default function PhonesList({
 
       {phones.length === 0 && (
         <div className="rounded-3xl border border-dashed border-border/60 bg-surface/60 py-12 text-center">
-          <p className="text-sm text-text-muted">
+          <p className="text-sm text-muted-foreground">
             No phones match your filters yet. Try broadening your selection.
           </p>
         </div>
@@ -93,7 +93,9 @@ export default function PhonesList({
               Next
             </Button>
           </div>
-          <span className="text-sm text-text-muted">{paginationText}</span>
+          <span className="text-sm text-muted-foreground">
+            {paginationText}
+          </span>
         </div>
       )}
     </div>
