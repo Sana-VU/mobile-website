@@ -41,13 +41,16 @@ async function getPhonesForComparison(phoneIds: number[]) {
 export default async function ComparePage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  // Await searchParams
+  const params = await searchParams;
+
   // Get phone IDs from search params (e.g. ?phones=1,2,3)
-  const phoneIdsParam = searchParams.phones
-    ? Array.isArray(searchParams.phones)
-      ? searchParams.phones[0]
-      : searchParams.phones
+  const phoneIdsParam = params.phones
+    ? Array.isArray(params.phones)
+      ? params.phones[0]
+      : params.phones
     : "";
 
   const phoneIds = phoneIdsParam

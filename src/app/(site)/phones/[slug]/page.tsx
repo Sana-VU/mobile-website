@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import { db } from "@/lib/db";
+import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +43,7 @@ async function getPhoneBySlug(slug: string) {
 
   const id = parseInt(idMatch[1]);
 
-  const phone = await db.phone.findUnique({
+  const phone = await prisma.phone.findUnique({
     where: { id },
     include: {
       brand: true,
@@ -65,7 +64,7 @@ async function getPhoneBySlug(slug: string) {
 
 // Get related phones from the same brand
 async function getRelatedPhones(brandId: number, currentPhoneId: number) {
-  const relatedPhones = await db.phone.findMany({
+  const relatedPhones = await prisma.phone.findMany({
     where: {
       brandId,
       id: {

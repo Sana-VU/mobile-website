@@ -3,6 +3,7 @@
 import { Inter, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
+import { PwaMetadata } from "@/components/pwa-metadata";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,6 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <PwaMetadata />
+      </head>
       <body
         className={`${inter.variable} ${geistMono.variable} font-sans antialiased`}
       >

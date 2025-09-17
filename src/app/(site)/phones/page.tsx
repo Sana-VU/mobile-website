@@ -20,9 +20,12 @@ interface SearchParams {
 export default async function PhonesPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const page = parseInt(searchParams.page || "1");
+  // Await searchParams
+  const params = await searchParams;
+
+  const page = parseInt(params.page || "1");
   const pageSize = 20;
   const skip = (page - 1) * pageSize;
 
@@ -56,30 +59,30 @@ export default async function PhonesPage({
           }}
           ramOptions={ramOptions.map((r: { ramGB: number }) => r.ramGB)}
           selectedFilters={{
-            brands: Array.isArray(searchParams.brand)
-              ? searchParams.brand
-              : searchParams.brand
-                ? [searchParams.brand]
+            brands: Array.isArray(params.brand)
+              ? params.brand
+              : params.brand
+                ? [params.brand]
                 : [],
-            minPrice: searchParams.minPrice
-              ? parseInt(searchParams.minPrice)
+            minPrice: params.minPrice
+              ? parseInt(params.minPrice)
               : priceStats._min.price || 0,
-            maxPrice: searchParams.maxPrice
-              ? parseInt(searchParams.maxPrice)
+            maxPrice: params.maxPrice
+              ? parseInt(params.maxPrice)
               : priceStats._max.price || 100000,
-            ram: Array.isArray(searchParams.ram)
-              ? searchParams.ram.map((r) => parseInt(r))
-              : searchParams.ram
-                ? [parseInt(searchParams.ram)]
+            ram: Array.isArray(params.ram)
+              ? params.ram.map((r: string) => parseInt(r))
+              : params.ram
+                ? [parseInt(params.ram)]
                 : [],
-            fiveG: searchParams.fiveG === "true",
+            fiveG: params.fiveG === "true",
           }}
         />
       </div>
 
       <Suspense fallback={<PhonesSkeleton />}>
         <PhonesWithFilters
-          searchParams={searchParams}
+          searchParams={params}
           pageSize={pageSize}
           skip={skip}
         />

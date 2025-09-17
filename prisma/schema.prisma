@@ -10,12 +10,17 @@ datasource db {
 model Brand {
   id        Int     @id @default(autoincrement())
   name      String  @unique
+  slug      String  @unique
+  logo      String?
   phones    Phone[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Phone {
   id          Int     @id @default(autoincrement())
   name        String
+  slug        String  @unique
   brandId     Int
   brand       Brand   @relation(fields: [brandId], references: [id])
   ramGB       Int
@@ -24,9 +29,16 @@ model Phone {
   batteryMAh  Int
   displayInch Float
   releaseYear Int
+  chipset     String?
+  mainCamera  String?
+  frontCamera String?
+  os          String?
+  ptaApproved Boolean @default(false)
   vendorPrices VendorPrice[]
   comparisonsAsA Comparison[] @relation("ComparisonA")
   comparisonsAsB Comparison[] @relation("ComparisonB")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([brandId])
   @@index([ramGB])
@@ -36,18 +48,25 @@ model Phone {
 model Vendor {
   id        Int     @id @default(autoincrement())
   name      String  @unique
+  slug      String  @unique
+  website   String?
   prices    VendorPrice[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VendorPrice {
   id        Int     @id @default(autoincrement())
   phoneId   Int
   vendorId  Int
-  price     Int
+  pricePKR  Int
   phone     Phone   @relation(fields: [phoneId], references: [id])
   vendor    Vendor  @relation(fields: [vendorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([price])
+  @@index([pricePKR])
+  @@unique([phoneId, vendorId])
 }
 
 model Comparison {

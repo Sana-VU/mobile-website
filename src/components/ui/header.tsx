@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { SearchBar } from "@/components/ui/search-bar";
+import { HeaderSearchBar } from "@/components/CompactSearchBar";
+import { HeaderInstallButton } from "@/components/pwa-install-prompt";
 import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
@@ -42,10 +43,11 @@ export function Header({ className, onMenuClick }: HeaderProps) {
             </span>
           </Link>
           <div className="ml-auto flex items-center gap-2">
+            <HeaderInstallButton />
             <ThemeToggle />
           </div>
         </div>
-        <SearchBar className="w-full" />
+        <HeaderSearchBar className="w-full" />
       </div>
     </header>
   );
