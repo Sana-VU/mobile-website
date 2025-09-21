@@ -59,24 +59,15 @@ interface PhoneCardsGridProps {
 }
 
 // Optimized placeholder component for better CLS prevention
-const ImagePlaceholder = memo(function ImagePlaceholder({
-  className,
-}: {
-  className?: string;
-}) {
+const ImagePlaceholder = memo(function ImagePlaceholder({ className }: { className?: string }) {
   return (
-    <div
-      className={`w-full h-full flex items-center justify-center bg-muted ${className}`}
-    >
+    <div className={`w-full h-full flex items-center justify-center bg-muted ${className}`}>
       <Smartphone className="h-12 w-12 text-muted-foreground opacity-50" />
     </div>
   );
 });
 
-const PhoneCard = memo(function PhoneCard({
-  phone,
-  viewMode = "grid",
-}: PhoneCardProps) {
+const PhoneCard = memo(function PhoneCard({ phone, viewMode = "grid" }: PhoneCardProps) {
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
   // Memoize expensive calculations
@@ -122,43 +113,26 @@ const PhoneCard = memo(function PhoneCard({
     };
   }, [phone]);
 
-  const handleCompareClick = useMemo(
-    () => (e: React.MouseEvent) => {
-      e.preventDefault(); // Prevent navigation to phone page
-      e.stopPropagation();
+  const handleCompareClick = useMemo(() => (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to phone page
+    e.stopPropagation();
 
-      const phoneForCompare = {
-        id: phone.id,
-        name: phone.name,
-        slug: phoneData.phoneSlug,
-        brand: { name: phone.brand.name },
-      };
+    const phoneForCompare = {
+      id: phone.id,
+      name: phone.name,
+      slug: phoneData.phoneSlug,
+      brand: { name: phone.brand.name },
+    };
 
-      if (isInCompare(phone.id)) {
-        removeFromCompare(phone.id);
-      } else {
-        addToCompare(phoneForCompare);
-      }
-    },
-    [
-      phone.id,
-      phone.name,
-      phoneData.phoneSlug,
-      phone.brand.name,
-      isInCompare,
-      removeFromCompare,
-      addToCompare,
-    ]
-  );
+    if (isInCompare(phone.id)) {
+      removeFromCompare(phone.id);
+    } else {
+      addToCompare(phoneForCompare);
+    }
+  }, [phone.id, phone.name, phoneData.phoneSlug, phone.brand.name, isInCompare, removeFromCompare, addToCompare]);
 
   const inCompare = isInCompare(phone.id);
-  const {
-    phoneSlug,
-    lowestPrice,
-    discountPercentage,
-    availableVendors,
-    specs,
-  } = phoneData;
+  const { phoneSlug, lowestPrice, discountPercentage, availableVendors, specs } = phoneData;
 
   if (viewMode === "list") {
     return (

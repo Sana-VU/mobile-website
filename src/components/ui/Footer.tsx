@@ -53,6 +53,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/phones"
+                  prefetch={false}
                   className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Phones
@@ -61,6 +62,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/brands"
+                  prefetch={false}
                   className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Brands
@@ -69,6 +71,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/compare"
+                  prefetch={false}
                   className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Compare
@@ -77,6 +80,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/blog"
+                  prefetch={false}
                   className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Blog
@@ -85,6 +89,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/search"
+                  prefetch={false}
                   className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Search

@@ -1,205 +1,64 @@
 import { Metadata } from "next";
-import Link from "next/link";
-import { ChevronRight, Grid3X3, List } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { SimpleFilters } from "@/components/phones/simple-filters";
-import { ResultsToolbar } from "@/components/phones/results-toolbar";
-import { PhoneCardsGrid } from "@/components/phones/phone-cards-grid";
-import { Pagination } from "@/components/phones/pagination";
-import {
-  getPhones,
-  getBrandsWithCounts,
-  extractActiveFilters,
-  type PhoneFilters,
-} from "@/lib/phones.query";
+import { Suspense } from "react";
+import { PhoneFiltersSection } from "@/components/phones/phone-filters-section-enhanced";
+import { PhoneResults } from "@/components/phones/phone-results";
+import { FiltersLoading } from "@/components/phones/filters-loading";
+import { PhoneResultsLoading } from "@/components/phones/phone-results-loading";
+import { parseSearchParams } from "@/lib/url-state";
 
 export const metadata: Metadata = {
   title: "Phone Finder - Find Your Perfect Mobile | WhatMobile",
-  description: "Discover and compare mobile phones with advanced filters.",
+  description:
+    "Discover and compare mobile phones with advanced filters. Find the perfect smartphone with our comprehensive search and filtering system.",
+  keywords:
+    "mobile phones, smartphones, phone comparison, phone finder, mobile specs",
+  openGraph: {
+    title: "Phone Finder - Find Your Perfect Mobile",
+    description: "Discover and compare mobile phones with advanced filters",
+    type: "website",
+  },
 };
 
-// Enable caching for 5 minutes (300 seconds)
 export const revalidate = 300;
 
-interface SearchParams {
-  page?: string;
-  brand?: string | string[];
-  minPrice?: string;
-  maxPrice?: string;
-  ram?: string | string[];
-  storage?: string | string[];
-  chipsetVendor?: string | string[];
-  displaySize?: string;
-  batteryMin?: string;
-  batteryMax?: string;
-  fiveG?: string;
-  ptaApproved?: string;
-  sort?:
-    | "relevance"
-    | "newest"
-    | "price-asc"
-    | "price-desc"
-    | "ram"
-    | "battery"
-    | "camera";
-  view?: "grid" | "list";
-}
-
 interface PhonesPageProps {
-  searchParams: Promise<SearchParams>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function PhoneFinderPage({
-  searchParams,
-}: PhonesPageProps) {
+export default async function PhonesPage({ searchParams }: PhonesPageProps) {
   const params = await searchParams;
-  const viewMode = params.view || "grid";
-  const currentPage = parseInt(params.page || "1");
-  const pageSize = 20;
-
-  // Convert search params to phone filters
-  const filters: PhoneFilters = {
-    brand: params.brand,
-    minPrice: params.minPrice,
-    maxPrice: params.maxPrice,
-    ram: params.ram,
-    storage: params.storage,
-    chipsetVendor: params.chipsetVendor,
-    displaySize: params.displaySize,
-    batteryMin: params.batteryMin,
-    batteryMax: params.batteryMax,
-    fiveG: params.fiveG,
-    ptaApproved: params.ptaApproved,
-    sort: params.sort || "relevance",
-    view: viewMode,
-  };
-
-  // Fetch data using the optimized query functions
-  const [phoneResults, brands] = await Promise.all([
-    getPhones(filters, { page: currentPage, pageSize }),
-    getBrandsWithCounts(),
-  ]);
-
-  const { phones, totalCount, totalPages } = phoneResults;
-
-  // Extract active filters for the toolbar
-  const activeFilters = extractActiveFilters(filters);
-
-  const currentSort = params.sort || "relevance";
-
-  // Transform phones data to match the expected interface for cards
-  const transformedPhones = phones.map((phone) => ({
-    ...phone,
-    chipset: phone.chipset || undefined,
-    vendorPrices: phone.vendorPrices.map((vp) => ({
-      id: vp.id,
-      vendor: vp.vendor.name,
-      pricePKR: vp.pricePKR,
-      availability: "available" as const,
-    })),
-  }));
+  const filters = parseSearchParams(params);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Breadcrumb */}
-      <nav aria-label="breadcrumb" className="border-b">
-        <div className="container mx-auto px-4 py-3">
-          <ol className="flex items-center space-x-2 text-sm">
-            <li>
-              <Link
-                href="/"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Home
-              </Link>
-            </li>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <li>
-              <span className="font-medium text-foreground">Phones</span>
-            </li>
-          </ol>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-4 lg:px-6 py-6">
+        {/* Mobile/Tablet: Stacked Layout */}
+        <div className="lg:hidden space-y-6">
+          <Suspense fallback={<FiltersLoading />}>
+            <PhoneFiltersSection filters={filters} />
+          </Suspense>
+          <Suspense fallback={<PhoneResultsLoading />}>
+            <PhoneResults filters={filters} />
+          </Suspense>
         </div>
-      </nav>
 
-      {/* Header Bar */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-foreground">
-              Phone Finder
-            </h1>
-            <div className="text-sm text-muted-foreground">
-              {totalCount.toLocaleString()} results
+        {/* Desktop: Sticky Sidebar Layout */}
+        <div className="hidden lg:flex gap-8">
+          {/* Sticky Sidebar Filters */}
+          <aside className="w-80 flex-shrink-0">
+            <div className="sticky top-6">
+              <Suspense fallback={<FiltersLoading />}>
+                <PhoneFiltersSection filters={filters} />
+              </Suspense>
             </div>
-          </div>
-        </div>
-      </div>
+          </aside>
 
-      {/* Main Content Grid */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="lg:grid lg:grid-cols-[320px,1fr] lg:gap-6">
-          {/* Left Sticky Filter Panel */}
-          <div className="hidden lg:block">
-            <div
-              className="sticky top-[84px] h-[calc(100dvh-96px)] overflow-auto"
-              style={{ scrollbarWidth: "thin" }}
-            >
-              <SimpleFilters brands={brands} />
-            </div>
-          </div>
-
-          {/* Right Results Section */}
-          <div className="space-y-6">
-            {/* Results Toolbar */}
-            <ResultsToolbar
-              totalCount={totalCount}
-              activeFilters={activeFilters}
-              currentSort={currentSort}
-            />
-
-            {/* View Toggle */}
-            <div className="flex justify-end">
-              <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-                <Button
-                  variant={viewMode === "grid" ? "secondary" : "ghost"}
-                  size="sm"
-                  asChild
-                >
-                  <Link href="/phones?view=grid">
-                    <Grid3X3 className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "secondary" : "ghost"}
-                  size="sm"
-                  asChild
-                >
-                  <Link href="/phones?view=list">
-                    <List className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* Phone Cards */}
-            <PhoneCardsGrid phones={transformedPhones} viewMode={viewMode} />
-
-            {/* No Results */}
-            {phones.length === 0 && (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold mb-2">No phones found</h3>
-                <p className="text-muted-foreground mb-4">
-                  Try adjusting your filters to see more results
-                </p>
-                <Button asChild variant="outline">
-                  <Link href="/phones">Clear all filters</Link>
-                </Button>
-              </div>
-            )}
-
-            {/* Pagination */}
-            <Pagination currentPage={currentPage} totalPages={totalPages} />
-          </div>
+          {/* Main Content */}
+          <main className="flex-1 min-w-0">
+            <Suspense fallback={<PhoneResultsLoading />}>
+              <PhoneResults filters={filters} />
+            </Suspense>
+          </main>
         </div>
       </div>
     </div>

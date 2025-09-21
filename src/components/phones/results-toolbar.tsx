@@ -6,6 +6,7 @@ import { Select } from "@/components/ui/select";
 import { X, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { SavedSearches } from "./saved-searches";
 
 interface FilterChip {
   key: string;
@@ -81,7 +82,10 @@ export function ResultsToolbar({
       {/* Results Count & Mobile Filter Button */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2
+            className="text-lg font-semibold text-foreground"
+            aria-live="polite"
+          >
             {totalCount.toLocaleString()} phones found
           </h2>
 
@@ -91,70 +95,120 @@ export function ResultsToolbar({
             size="sm"
             onClick={onMobileFiltersOpen}
             className="lg:hidden"
+            aria-label="Open filters panel"
+            aria-describedby="mobile-filter-count"
           >
-            <SlidersHorizontal className="h-4 w-4 mr-2" />
+            <SlidersHorizontal className="h-4 w-4 mr-2" aria-hidden="true" />
             Filters
             {activeFilters.length > 0 && (
-              <Badge variant="secondary" className="ml-2 h-5 px-1.5 text-xs">
+              <Badge
+                variant="secondary"
+                className="ml-2 h-5 px-1.5 text-xs"
+                id="mobile-filter-count"
+                aria-label={`${activeFilters.length} active filter${activeFilters.length === 1 ? "" : "s"}`}
+              >
                 {activeFilters.length}
               </Badge>
             )}
           </Button>
         </div>
 
-        {/* Sort Dropdown */}
-        <div className="flex items-center gap-2">
-          <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-          <Select
-            value={currentSort}
-            onChange={handleSortChange}
-            className="w-40"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </Select>
+        {/* Sort Dropdown & Saved Searches */}
+        <div className="flex items-center gap-3">
+          <SavedSearches totalResults={totalCount} />
+
+          <div className="flex items-center gap-2">
+            <ArrowUpDown
+              className="h-4 w-4 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <label htmlFor="sort-select" className="sr-only">
+              Sort phones by
+            </label>
+            <Select
+              id="sort-select"
+              value={currentSort}
+              onChange={handleSortChange}
+              className="w-40"
+              aria-label="Sort phones by"
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
       </div>
 
       {/* Active Filter Chips */}
       {activeFilters.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="space-y-2">
           <span className="text-sm font-medium text-muted-foreground">
             Active filters:
           </span>
 
-          {activeFilters.map((filter) => (
-            <Badge
-              key={`${filter.key}-${filter.value}`}
-              variant="secondary"
-              className="gap-1 pr-1 hover:bg-muted/80 transition-colors"
-            >
-              <span className="text-xs">{filter.label}</span>
+          <div
+            className="flex flex-wrap items-center gap-2"
+            role="group"
+            aria-label="Active filters"
+          >
+            {activeFilters.map((filter, index) => (
+              <Badge
+                key={`${filter.key}-${filter.value}`}
+                variant="secondary"
+                className="gap-1 pr-1 hover:bg-muted/80 transition-colors group focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+                tabIndex={-1}
+              >
+                <span className="text-xs">{filter.label}</span>
+                <button
+                  className="h-4 w-4 p-0 hover:bg-destructive hover:text-destructive-foreground rounded-full flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 focus-visible:ring-offset-secondary transition-colors"
+                  onClick={() => removeFilter(filter.key)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Delete" || e.key === "Backspace") {
+                      e.preventDefault();
+                      removeFilter(filter.key);
+                    } else if (
+                      e.key === "ArrowRight" &&
+                      index < activeFilters.length - 1
+                    ) {
+                      e.preventDefault();
+                      const nextButton =
+                        e.currentTarget.parentElement?.parentElement?.children[
+                          index + 1
+                        ]?.querySelector("button");
+                      if (nextButton) (nextButton as HTMLButtonElement).focus();
+                    } else if (e.key === "ArrowLeft" && index > 0) {
+                      e.preventDefault();
+                      const prevButton =
+                        e.currentTarget.parentElement?.parentElement?.children[
+                          index - 1
+                        ]?.querySelector("button");
+                      if (prevButton) (prevButton as HTMLButtonElement).focus();
+                    }
+                  }}
+                  aria-label={`Remove ${filter.label} filter`}
+                  title={`Remove ${filter.label} filter (Press Delete or Backspace)`}
+                  type="button"
+                >
+                  <X className="h-3 w-3" aria-hidden="true" />
+                </button>
+              </Badge>
+            ))}
+
+            {activeFilters.length > 1 && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-4 w-4 p-0 hover:bg-destructive hover:text-destructive-foreground rounded-full"
-                onClick={() => removeFilter(filter.key)}
-                aria-label={`Remove ${filter.label} filter`}
+                onClick={clearAllFilters}
+                className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Clear all active filters"
               >
-                <X className="h-3 w-3" />
+                Clear all
               </Button>
-            </Badge>
-          ))}
-
-          {activeFilters.length > 1 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAllFilters}
-              className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
-            >
-              Clear all
-            </Button>
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>

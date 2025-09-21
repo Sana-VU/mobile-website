@@ -10,12 +10,12 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Phones", href: "/phones" },
-  { name: "Brands", href: "/brands" },
-  { name: "Compare", href: "/compare" },
-  { name: "Blog", href: "/blog" },
-  { name: "Search", href: "/search" },
+  { name: "Home", href: "/", prefetch: true }, // Home should be prefetched
+  { name: "Phones", href: "/phones", prefetch: true }, // Main feature, prefetch
+  { name: "Brands", href: "/brands", prefetch: false }, // Heavy page, no prefetch
+  { name: "Compare", href: "/compare", prefetch: false }, // Heavy page, no prefetch
+  { name: "Blog", href: "/blog", prefetch: false }, // Secondary content, no prefetch
+  { name: "Search", href: "/search", prefetch: false }, // Search results, no prefetch
 ];
 
 export function Header() {
@@ -55,6 +55,7 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  prefetch={item.prefetch}
                   className={cn(
                     "px-3 py-2 text-sm font-medium transition-colors hover:text-white/90",
                     isActive ? "text-white font-semibold" : "text-white/80"
@@ -139,6 +140,7 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  prefetch={item.prefetch}
                   className={cn(
                     "block px-3 py-2 text-base font-medium rounded-md transition-colors",
                     isActive
