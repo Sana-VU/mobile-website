@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPost, getAllPosts, getRelatedPosts } from "@/lib/sanity";
+import { getPostBySlug, getAllPosts, getRelatedPosts } from "@/lib/sanity";
 import { PortableText, PortableTextBlock } from "@portabletext/react";
 import { urlForImage } from "@/lib/sanity";
 import Image from "next/image";
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getPost(params.slug);
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
     return {
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: post.seo?.ogImage?.asset
         ? [
             {
-              url: post.seo.ogImage.asset.url,
+              url: urlForImage(post.seo.ogImage.asset).width(1200).height(630).url(),
               width: 1200,
               height: 630,
               alt: post.seo.ogImage.alt || post.title,
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         : post.coverImage?.asset
           ? [
               {
-                url: post.coverImage.asset.url,
+                url: urlForImage(post.coverImage.asset).width(1200).height(630).url(),
                 width: 1200,
                 height: 630,
                 alt: post.coverImage.alt || post.title,
@@ -69,9 +69,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.seo?.twitterTitle || post.title,
       description: post.seo?.twitterDescription || post.excerpt || post.title,
       images: post.seo?.twitterImage?.asset
-        ? [post.seo.twitterImage.asset.url]
+        ? [urlForImage(post.seo.twitterImage.asset).width(1200).height(630).url()]
         : post.coverImage?.asset
-          ? [post.coverImage.asset.url]
+          ? [urlForImage(post.coverImage.asset).width(1200).height(630).url()]
           : [],
       creator: post.author.social?.twitter
         ? `@${post.author.social.twitter}`
@@ -207,7 +207,7 @@ const portableTextComponents = {
 };
 
 export default async function BlogPostPage({ params }: Props) {
-  const post = await getPost(params.slug);
+  const post = await getPostBySlug(params.slug);
 
   if (!post) {
     notFound();

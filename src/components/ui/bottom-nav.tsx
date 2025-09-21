@@ -7,7 +7,7 @@ import {
   Search as SearchIcon,
   LayoutGrid,
   GitCompare,
-  Newspaper,
+  Smartphone,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,10 +17,10 @@ interface BottomNavProps {
 
 const navItems = [
   { href: "/", label: "Home", icon: HomeIcon },
+  { href: "/phones", label: "Phones", icon: Smartphone },
   { href: "/brands", label: "Brands", icon: LayoutGrid },
   { href: "/compare", label: "Compare", icon: GitCompare },
   { href: "/search", label: "Search", icon: SearchIcon },
-  { href: "/blog", label: "Blog", icon: Newspaper },
 ];
 
 export function BottomNav({ pathname }: BottomNavProps) {
@@ -33,7 +33,7 @@ export function BottomNav({ pathname }: BottomNavProps) {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-50 block border-t border-border/80 bg-surface/80 pb-safe-bottom shadow-soft backdrop-blur-lg md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 block border-t bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-neutral-950/95 dark:supports-[backdrop-filter]:bg-neutral-950/60 md:hidden safe-area-bottom"
       aria-label="Primary"
     >
       <ul className="mx-auto flex max-w-xl items-center justify-between gap-1 px-4 py-2">
@@ -45,17 +45,20 @@ export function BottomNav({ pathname }: BottomNavProps) {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex w-full flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium transition-all duration-soft ease-soft-spring",
+                  "flex w-full flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium transition-all",
                   isActive
-                    ? "bg-primary/15 text-primary"
-                    : "text-muted-foreground hover:bg-accent/60 hover:text-accent-foreground"
+                    ? "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"
+                    : "text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800"
                 )}
+                aria-current={isActive ? "page" : undefined}
               >
                 <Icon
                   aria-hidden
                   className={cn(
                     "mb-1 h-5 w-5",
-                    isActive ? "text-primary" : "text-muted-foreground"
+                    isActive
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-neutral-600 dark:text-neutral-400"
                   )}
                 />
                 <span>{item.label}</span>

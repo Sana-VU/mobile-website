@@ -35,6 +35,7 @@ model Phone {
   os          String?
   ptaApproved Boolean @default(false)
   vendorPrices VendorPrice[]
+  priceHistory PriceHistory[]
   comparisonsAsA Comparison[] @relation("ComparisonA")
   comparisonsAsB Comparison[] @relation("ComparisonB")
   createdAt   DateTime @default(now())
@@ -67,6 +68,19 @@ model VendorPrice {
 
   @@index([pricePKR])
   @@unique([phoneId, vendorId])
+}
+
+model PriceHistory {
+  id        Int     @id @default(autoincrement())
+  phoneId   Int
+  pricePKR  Int
+  source    String  // e.g., "Daraz", "PriceOye", "OLX", "WhatMobile"
+  phone     Phone   @relation(fields: [phoneId], references: [id])
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([phoneId, date])
+  @@index([pricePKR])
 }
 
 model Comparison {

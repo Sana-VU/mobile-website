@@ -1,13 +1,40 @@
 "use client";
 
-import { PhoneWithBrand } from "@/types/models";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
+// More flexible type for database query results
+type ComparePhone = {
+  id: number;
+  name: string;
+  slug: string;
+  brandId: number;
+  releaseYear: number;
+  displayInch: number;
+  ramGB: number;
+  storageGB: number;
+  batteryMAh: number;
+  fiveG: boolean;
+  brand: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+  vendorPrices?: Array<{
+    id: number;
+    pricePKR: number;
+    vendor: {
+      id: number;
+      name: string;
+      slug: string;
+    };
+  }>;
+};
+
 interface ComparisonTableProps {
-  phones: PhoneWithBrand[];
+  phones: ComparePhone[];
 }
 
 export function ComparisonTable({ phones }: ComparisonTableProps) {
@@ -20,10 +47,8 @@ export function ComparisonTable({ phones }: ComparisonTableProps) {
   }
 
   // Creates a URL slug for a phone
-  const getPhoneSlug = (phone: PhoneWithBrand) => {
-    return `${phone.brand.name.toLowerCase()}-${phone.name
-      .toLowerCase()
-      .replace(/\s+/g, "-")}-${phone.id}`;
+  const getPhoneSlug = (phone: ComparePhone) => {
+    return `/phones/${phone.slug}`;
   };
 
   return (
@@ -68,7 +93,7 @@ export function ComparisonTable({ phones }: ComparisonTableProps) {
             {phones.map((phone) => (
               <td key={phone.id} className="p-4 border-b text-center">
                 <div className="font-semibold">
-                  {formatPrice(phone.vendorPrices?.[0]?.price || 0)}
+                  {formatPrice(phone.vendorPrices?.[0]?.pricePKR || 0)}
                 </div>
               </td>
             ))}

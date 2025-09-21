@@ -1,41 +1,58 @@
 import { Metadata } from "next";
+import UniversalSearch from "@/components/search/UniversalSearch";
 
 export const metadata: Metadata = {
-  title: "Search Phones - WhatMobile",
-  description: "Search for mobile phones by name, brand, or specifications",
+  title: "Search - WhatMobile | Find Phones, Reviews & Articles",
+  description:
+    "Search for mobile phones, reviews, and articles on WhatMobile. Find the perfect smartphone with advanced search filters.",
+  keywords: [
+    "phone search",
+    "mobile search",
+    "smartphone finder",
+    "phone comparison",
+    "mobile reviews",
+    "phone specs search",
+  ],
+  openGraph: {
+    title: "Universal Search - WhatMobile",
+    description:
+      "Find phones, reviews, and articles with our comprehensive search",
+    type: "website",
+    url: "https://whatmobile.com.pk/search",
+  },
 };
 
-export default function SearchPage() {
+interface SearchPageProps {
+  searchParams: Promise<{
+    q?: string;
+    type?: "phones" | "brands" | "articles" | "all";
+    category?: string;
+    brand?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    page?: string;
+  }>;
+}
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const params = await searchParams;
+
   return (
-    <div className="container py-6">
-      <h1 className="text-2xl font-bold mb-4">Search</h1>
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl lg:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
+            Universal Search
+          </h1>
+          <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
+            Find phones, reviews, articles, and more with our comprehensive
+            search
+          </p>
+        </div>
 
-      {/* Search form */}
-      <div className="relative mb-6">
-        <input
-          type="search"
-          placeholder="Search for phones, brands, or specs..."
-          className="w-full p-3 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-        />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-      </div>
-
-      {/* Search results will appear here */}
-      <div className="text-center text-muted-foreground py-8">
-        Enter a search term to find phones
+        {/* Universal Search Component */}
+        <UniversalSearch initialParams={params} />
       </div>
     </div>
   );

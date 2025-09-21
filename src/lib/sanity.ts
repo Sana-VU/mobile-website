@@ -5,7 +5,7 @@ import { PortableTextBlock } from "@portabletext/types";
 
 // Sanity configuration
 export const sanityConfig = {
-  projectId: process.env.SANITY_PROJECT_ID!,
+  projectId: process.env.SANITY_PROJECT_ID || "demo-project",
   dataset: process.env.SANITY_DATASET || "production",
   apiVersion: "2023-12-01",
   useCdn: process.env.NODE_ENV === "production",
@@ -71,6 +71,25 @@ export interface Post {
   seo?: {
     metaTitle?: string;
     metaDescription?: string;
+    keywords?: string[];
+    ogTitle?: string;
+    ogDescription?: string;
+    ogImage?: {
+      asset: {
+        _ref: string;
+        _type: string;
+      };
+      alt?: string;
+    };
+    twitterTitle?: string;
+    twitterDescription?: string;
+    twitterImage?: {
+      asset: {
+        _ref: string;
+        _type: string;
+      };
+      alt?: string;
+    };
   };
   body: PortableTextBlock[];
   _createdAt: string;
@@ -234,25 +253,70 @@ export const RELATED_POSTS_QUERY = `*[_type == "post" && _id != $postId && defin
 
 // Helper functions
 export async function getAllPosts(): Promise<BlogListItem[]> {
-  return await sanityClient.fetch(POSTS_QUERY);
+  try {
+    // Return empty array if Sanity is not configured properly
+    if (sanityConfig.projectId === "demo-project" || !sanityConfig.token) {
+      return [];
+    }
+    return await sanityClient.fetch(POSTS_QUERY);
+  } catch {
+    console.warn("Sanity not configured, returning empty posts array");
+    return [];
+  }
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  return await sanityClient.fetch(POST_QUERY, { slug });
+  try {
+    // Return null if Sanity is not configured properly
+    if (sanityConfig.projectId === "demo-project" || !sanityConfig.token) {
+      return null;
+    }
+    return await sanityClient.fetch(POST_QUERY, { slug });
+  } catch {
+    console.warn("Sanity not configured, returning null for post");
+    return null;
+  }
 }
 
 export async function getFeaturedPosts(): Promise<BlogListItem[]> {
-  return await sanityClient.fetch(FEATURED_POSTS_QUERY);
+  try {
+    // Return empty array if Sanity is not configured properly
+    if (sanityConfig.projectId === "demo-project" || !sanityConfig.token) {
+      return [];
+    }
+    return await sanityClient.fetch(FEATURED_POSTS_QUERY);
+  } catch {
+    console.warn("Sanity not configured, returning empty featured posts array");
+    return [];
+  }
 }
 
 export async function getPostsByCategory(
   category: string
 ): Promise<BlogListItem[]> {
-  return await sanityClient.fetch(POSTS_BY_CATEGORY_QUERY, { category });
+  try {
+    // Return empty array if Sanity is not configured properly
+    if (sanityConfig.projectId === "demo-project" || !sanityConfig.token) {
+      return [];
+    }
+    return await sanityClient.fetch(POSTS_BY_CATEGORY_QUERY, { category });
+  } catch {
+    console.warn("Sanity not configured, returning empty posts by category array");
+    return [];
+  }
 }
 
 export async function getAllPostSlugs(): Promise<string[]> {
-  return await sanityClient.fetch(POST_SLUGS_QUERY);
+  try {
+    // Return empty array if Sanity is not configured properly
+    if (sanityConfig.projectId === "demo-project" || !sanityConfig.token) {
+      return [];
+    }
+    return await sanityClient.fetch(POST_SLUGS_QUERY);
+  } catch {
+    console.warn("Sanity not configured, returning empty post slugs array");
+    return [];
+  }
 }
 
 export async function getRelatedPosts(
@@ -261,12 +325,21 @@ export async function getRelatedPosts(
   tags?: string[],
   phoneRef?: string
 ): Promise<BlogListItem[]> {
-  return await sanityClient.fetch(RELATED_POSTS_QUERY, {
-    postId,
-    category,
-    tags: tags || [],
-    phoneRef,
-  });
+  try {
+    // Return empty array if Sanity is not configured properly
+    if (sanityConfig.projectId === "demo-project" || !sanityConfig.token) {
+      return [];
+    }
+    return await sanityClient.fetch(RELATED_POSTS_QUERY, {
+      postId,
+      category,
+      tags: tags || [],
+      phoneRef,
+    });
+  } catch {
+    console.warn("Sanity not configured, returning empty related posts array");
+    return [];
+  }
 }
 
 // Calculate reading time

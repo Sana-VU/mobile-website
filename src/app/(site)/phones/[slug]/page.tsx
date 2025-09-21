@@ -1,21 +1,21 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, CheckCircle2, Smartphone, Cpu, Battery } from "lucide-react";
-import { PhoneWithDetails, PhoneWithBrand, VendorPrice } from "@/types/models";
 
 // Generate metadata for SEO
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const phone = await getPhoneBySlug(params.slug);
+  const { slug } = await params;
+  const phone = await getPhoneBySlug(slug);
 
   if (!phone) {
     return {
@@ -25,10 +25,10 @@ export async function generateMetadata({
 
   return {
     title: `${phone.brand.name} ${phone.name} - Specs, Prices & Reviews`,
-    description: `Check out the ${phone.brand.name} ${phone.name} with ${phone.ramGB}GB RAM, ${phone.storageGB}GB storage, ${phone.displayInch}&quot; display, and ${phone.batteryMAh}mAh battery. Compare prices from top vendors.`,
+    description: `Check out the ${phone.brand.name} ${phone.name} with ${phone.ramGB}GB RAM, ${phone.storageGB}GB storage, ${phone.displayInch}" display, and ${phone.batteryMAh}mAh battery. Compare prices from top vendors.`,
     openGraph: {
       title: `${phone.brand.name} ${phone.name} - Specs, Prices & Reviews`,
-      description: `Check out the ${phone.brand.name} ${phone.name} with ${phone.ramGB}GB RAM, ${phone.storageGB}GB storage, ${phone.displayInch}&quot; display, and ${phone.batteryMAh}mAh battery. Compare prices from top vendors.`,
+      description: `Check out the ${phone.brand.name} ${phone.name} with ${phone.ramGB}GB RAM, ${phone.storageGB}GB storage, ${phone.displayInch}" display, and ${phone.batteryMAh}mAh battery. Compare prices from top vendors.`,
       type: "website",
     },
   };
@@ -36,15 +36,8 @@ export async function generateMetadata({
 
 // Get phone data by slug
 async function getPhoneBySlug(slug: string) {
-  // In a real app, you'd have a slug field in your DB
-  // For now, we'll use the ID part of the slug (e.g., "samsung-galaxy-s24-ultra-1" => "1")
-  const idMatch = slug.match(/(\d+)$/);
-  if (!idMatch) return null;
-
-  const id = parseInt(idMatch[1]);
-
-  const phone = await prisma.phone.findUnique({
-    where: { id },
+  const phone = await db.phone.findFirst({
+    where: { slug },
     include: {
       brand: true,
       vendorPrices: {
@@ -52,19 +45,18 @@ async function getPhoneBySlug(slug: string) {
           vendor: true,
         },
         orderBy: {
-          price: "asc",
+          pricePKR: "asc",
         },
       },
     },
   });
-  return phone;
 
   return phone;
 }
 
 // Get related phones from the same brand
 async function getRelatedPhones(brandId: number, currentPhoneId: number) {
-  const relatedPhones = await prisma.phone.findMany({
+  const relatedPhones = await db.phone.findMany({
     where: {
       brandId,
       id: {
@@ -78,14 +70,14 @@ async function getRelatedPhones(brandId: number, currentPhoneId: number) {
           vendor: true,
         },
         orderBy: {
-          price: "asc",
+          pricePKR: "asc",
         },
         take: 1,
       },
     },
     take: 4,
     orderBy: {
-      releaseYear: "desc",
+      createdAt: "desc",
     },
   });
 
@@ -93,17 +85,29 @@ async function getRelatedPhones(brandId: number, currentPhoneId: number) {
 }
 
 // Generate Product structured data for SEO
-function generateProductStructuredData(phone: PhoneWithDetails) {
-  const lowestPrice = phone.vendorPrices[0]?.price || 0;
+function generateProductStructuredData(phone: {
+  id: number;
+  name: string;
+  ramGB: number;
+  storageGB: number;
+  displayInch: number;
+  batteryMAh: number;
+  brand: { name: string };
+  vendorPrices: Array<{
+    pricePKR: number;
+    vendor: { name: string };
+  }>;
+}) {
+  const lowestPrice = phone.vendorPrices[0]?.pricePKR || 0;
   const highestPrice =
-    phone.vendorPrices[phone.vendorPrices.length - 1]?.price || lowestPrice;
+    phone.vendorPrices[phone.vendorPrices.length - 1]?.pricePKR || lowestPrice;
 
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `${phone.brand.name} ${phone.name}`,
     image: "/phone-placeholder.jpg", // In a real app, you'd have actual images
-    description: `${phone.brand.name} ${phone.name} with ${phone.ramGB}GB RAM, ${phone.storageGB}GB storage, ${phone.displayInch}&quot; display, and ${phone.batteryMAh}mAh battery.`,
+    description: `${phone.brand.name} ${phone.name} with ${phone.ramGB}GB RAM, ${phone.storageGB}GB storage, ${phone.displayInch}" display, and ${phone.batteryMAh}mAh battery.`,
     brand: {
       "@type": "Brand",
       name: phone.brand.name,
@@ -114,16 +118,18 @@ function generateProductStructuredData(phone: PhoneWithDetails) {
       highPrice: highestPrice,
       priceCurrency: "PKR",
       offerCount: phone.vendorPrices.length,
-      offers: phone.vendorPrices.map((vp) => ({
-        "@type": "Offer",
-        price: vp.price,
-        priceCurrency: "PKR",
-        availability: "https://schema.org/InStock",
-        seller: {
-          "@type": "Organization",
-          name: vp.vendor.name,
-        },
-      })),
+      offers: phone.vendorPrices.map(
+        (vp: { pricePKR: number; vendor: { name: string } }) => ({
+          "@type": "Offer",
+          price: vp.pricePKR,
+          priceCurrency: "PKR",
+          availability: "https://schema.org/InStock",
+          seller: {
+            "@type": "Organization",
+            name: vp.vendor.name,
+          },
+        })
+      ),
     },
   };
 }
@@ -131,19 +137,18 @@ function generateProductStructuredData(phone: PhoneWithDetails) {
 export default async function PhoneDetailsPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const phone = await getPhoneBySlug(params.slug);
+  const { slug } = await params;
+  const phone = await getPhoneBySlug(slug);
 
   if (!phone) {
     notFound();
   }
 
   const relatedPhones = await getRelatedPhones(phone.brand.id, phone.id);
-  const structuredData = generateProductStructuredData(
-    phone as PhoneWithDetails
-  );
-  const lowestPrice = phone.vendorPrices[0]?.price || 0;
+  const structuredData = generateProductStructuredData(phone);
+  const lowestPrice = phone.vendorPrices[0]?.pricePKR || 0;
 
   // Determine if phone is PTA approved (for demo, we'll say 50% are)
   const isPtaApproved = phone.id % 2 === 0;
@@ -181,7 +186,7 @@ export default async function PhoneDetailsPage({
                 "@type": "ListItem",
                 position: 3,
                 name: `${phone.brand.name} ${phone.name}`,
-                item: `https://whatmobile.example.com/phones/${params.slug}`,
+                item: `https://whatmobile.example.com/phones/${slug}`,
               },
             ],
           }),
@@ -285,7 +290,7 @@ export default async function PhoneDetailsPage({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {(phone.vendorPrices as VendorPrice[]).map((vp) => (
+                  {phone.vendorPrices.map((vp) => (
                     <div
                       key={vp.id}
                       className="flex items-center justify-between p-3 rounded-lg border hover:bg-secondary/10"
@@ -297,7 +302,9 @@ export default async function PhoneDetailsPage({
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">{formatPrice(vp.price)}</p>
+                        <p className="font-medium">
+                          {formatPrice(vp.pricePKR)}
+                        </p>
                         {/* In a real app, this would use an actual affiliate URL */}
                         <Button size="sm" className="mt-1">
                           Buy Now
@@ -505,7 +512,7 @@ export default async function PhoneDetailsPage({
               More from {phone.brand.name}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {(relatedPhones as PhoneWithBrand[]).map((relatedPhone) => (
+              {relatedPhones.map((relatedPhone) => (
                 <Card key={relatedPhone.id} className="overflow-hidden">
                   <div className="h-48 bg-secondary/20 flex items-center justify-center">
                     <div className="text-muted-foreground">
@@ -526,7 +533,7 @@ export default async function PhoneDetailsPage({
                     <div className="flex justify-between items-center mt-2">
                       <p className="font-medium">
                         {formatPrice(
-                          relatedPhone.vendorPrices?.[0]?.price ?? 0
+                          relatedPhone.vendorPrices?.[0]?.pricePKR ?? 0
                         )}
                       </p>
                       {relatedPhone.fiveG && (

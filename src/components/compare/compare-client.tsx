@@ -1,14 +1,41 @@
 "use client";
 
-import { PhoneWithBrand } from "@/types/models";
 import { PhoneSearch } from "@/components/compare/phone-search";
 import { ComparisonTable } from "@/components/compare/comparison-table";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
+// More flexible type for database query results
+type ComparePhone = {
+  id: number;
+  name: string;
+  slug: string;
+  brandId: number;
+  releaseYear: number;
+  displayInch: number;
+  ramGB: number;
+  storageGB: number;
+  batteryMAh: number;
+  fiveG: boolean;
+  brand: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+  vendorPrices: Array<{
+    id: number;
+    pricePKR: number;
+    vendor: {
+      id: number;
+      name: string;
+      slug: string;
+    };
+  }>;
+};
+
 interface CompareClientProps {
-  phones: PhoneWithBrand[];
+  phones: ComparePhone[];
   phoneIds: number[];
 }
 

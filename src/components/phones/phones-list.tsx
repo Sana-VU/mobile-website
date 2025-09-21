@@ -44,7 +44,7 @@ export default function PhonesList({
     <div className="space-y-8">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {phones.map((phone) => {
-          const lowestPrice = phone.vendorPrices[0]?.price ?? 0;
+          const lowestPrice = phone.vendorPrices[0]?.pricePKR ?? 0;
           const vendorName = phone.vendorPrices[0]?.vendor?.name ?? "Unknown";
 
           return (

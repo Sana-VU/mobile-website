@@ -1,194 +1,286 @@
-import { Prisma } from "@prisma/client";
-import { db } from "@/lib/db";
-import PhonesList from "@/components/phones/phones-list";
-import FiltersSheet from "@/components/phones/filters-sheet";
+import { Metadata } from "next";
 import { Suspense } from "react";
-import PhonesSkeleton from "@/components/phones/phones-skeleton";
+import { db } from "@/lib/db";
+import { PhoneCard } from "@/components/ui/phone-card";
+import { FiltersSheet } from "@/components/phones/filters-sheet-new";
+import { PhonesGrid } from "@/components/phones/phones-grid";
+import { PhonesGridSkeleton } from "@/components/phones/phones-grid-skeleton";
+import { PaginationControls } from "@/components/phones/pagination-controls";
+import {
+  parseSearchParams,
+  calculatePagination,
+  createPaginationMeta,
+} from "@/lib/pagination";
+import { Button } from "@/components/ui/button";
+import { Grid, List, SlidersHorizontal } from "lucide-react";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "All Mobile Phones | WhatMobile",
+  description:
+    "Browse mobile phones with specifications and prices. Filter by brand, price range, RAM, and 5G connectivity.",
+  keywords:
+    "mobile phones, smartphones, phone specifications, phone prices, Pakistan",
+};
 
 export const dynamic = "force-dynamic";
 
 interface SearchParams {
   page?: string;
-  brand?: string | string[];
-  minPrice?: string;
-  maxPrice?: string;
-  ram?: string | string[];
+  brand?: string;
+  min?: string;
+  max?: string;
+  ram?: string;
   fiveG?: string;
-  sort?: string;
+  view?: "grid" | "list";
 }
 
-export default async function PhonesPage({
-  searchParams,
-}: {
+interface PhonesPageProps {
   searchParams: Promise<SearchParams>;
-}) {
-  // Await searchParams
-  const params = await searchParams;
-
-  const page = parseInt(params.page || "1");
-  const pageSize = 20;
-  const skip = (page - 1) * pageSize;
-
-  // Get all brands for filter options
-  const brands = await db.brand.findMany({
-    orderBy: { name: "asc" },
-  });
-
-  // Get min and max prices for price range slider
-  const priceStats = await db.vendorPrice.aggregate({
-    _min: { price: true },
-    _max: { price: true },
-  });
-
-  // Get available RAM options
-  const ramOptions = await db.phone.findMany({
-    select: { ramGB: true },
-    distinct: ["ramGB"],
-    orderBy: { ramGB: "asc" },
-  });
-
-  return (
-    <div className="container py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Phones</h1>
-        <FiltersSheet
-          brands={brands}
-          priceRange={{
-            min: priceStats._min.price || 0,
-            max: priceStats._max.price || 100000,
-          }}
-          ramOptions={ramOptions.map((r: { ramGB: number }) => r.ramGB)}
-          selectedFilters={{
-            brands: Array.isArray(params.brand)
-              ? params.brand
-              : params.brand
-                ? [params.brand]
-                : [],
-            minPrice: params.minPrice
-              ? parseInt(params.minPrice)
-              : priceStats._min.price || 0,
-            maxPrice: params.maxPrice
-              ? parseInt(params.maxPrice)
-              : priceStats._max.price || 100000,
-            ram: Array.isArray(params.ram)
-              ? params.ram.map((r: string) => parseInt(r))
-              : params.ram
-                ? [parseInt(params.ram)]
-                : [],
-            fiveG: params.fiveG === "true",
-          }}
-        />
-      </div>
-
-      <Suspense fallback={<PhonesSkeleton />}>
-        <PhonesWithFilters
-          searchParams={params}
-          pageSize={pageSize}
-          skip={skip}
-        />
-      </Suspense>
-    </div>
-  );
 }
 
-async function PhonesWithFilters({
-  searchParams,
-  pageSize,
-  skip,
-}: {
-  searchParams: SearchParams;
-  pageSize: number;
-  skip: number;
-}) {
-  // Build the where clause for filtering
-  const where: Prisma.PhoneWhereInput = {};
+async function getPhones(filters: ReturnType<typeof parseSearchParams>) {
+  const pageSize = 20;
 
-  // Filter by brand
-  if (searchParams.brand) {
-    const brandIds = Array.isArray(searchParams.brand)
-      ? searchParams.brand.map(Number)
-      : [parseInt(searchParams.brand)];
+  // Build where clause based on filters
+  const where: any = {};
 
-    where.brandId = { in: brandIds };
-  }
-
-  // Filter by RAM
-  if (searchParams.ram) {
-    const ramValues = Array.isArray(searchParams.ram)
-      ? searchParams.ram.map(Number)
-      : [parseInt(searchParams.ram)];
-
-    where.ramGB = { in: ramValues };
-  }
-
-  // Filter by 5G
-  if (searchParams.fiveG) {
-    where.fiveG = searchParams.fiveG === "true";
-  }
-
-  // Price filter requires joining with VendorPrice
-  let priceFilter = {};
-  if (searchParams.minPrice || searchParams.maxPrice) {
-    priceFilter = {
-      vendorPrices: {
-        some: {
-          price: {
-            gte: searchParams.minPrice
-              ? parseInt(searchParams.minPrice)
-              : undefined,
-            lte: searchParams.maxPrice
-              ? parseInt(searchParams.maxPrice)
-              : undefined,
-          },
-        },
+  if (filters.brand) {
+    where.brand = {
+      name: {
+        contains: filters.brand,
+        mode: "insensitive",
       },
     };
   }
 
-  // Combine all filters
-  const filter = { ...where, ...priceFilter };
-
-  // Determine sort order
-  let orderBy;
-  switch (searchParams.sort) {
-    case "newest":
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      orderBy = { releaseYear: "desc" as any };
-      break;
-    default:
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      orderBy = { id: "desc" as any };
+  if (filters.ram) {
+    const ramValue = parseInt(filters.ram);
+    if (!isNaN(ramValue)) {
+      where.ramGB = ramValue;
+    }
   }
 
-  // Fetch phones with pagination and filtering
+  if (filters.fiveG === "true") {
+    where.fiveG = true;
+  } else if (filters.fiveG === "false") {
+    where.fiveG = false;
+  }
+
+  // Price range filter via vendorPrices relation
+  if (filters.min || filters.max) {
+    const priceWhere: any = {};
+
+    if (filters.min) {
+      const minPrice = parseInt(filters.min);
+      if (!isNaN(minPrice)) {
+        priceWhere.gte = minPrice;
+      }
+    }
+
+    if (filters.max) {
+      const maxPrice = parseInt(filters.max);
+      if (!isNaN(maxPrice)) {
+        priceWhere.lte = maxPrice;
+      }
+    }
+
+    if (Object.keys(priceWhere).length > 0) {
+      where.vendorPrices = {
+        some: {
+          pricePKR: priceWhere,
+        },
+      };
+    }
+  }
+
+  // Get total count for pagination
+  const totalCount = await db.phone.count({ where });
+
+  // Calculate pagination
+  const { skip, take, currentPage } = calculatePagination(
+    { page: filters.page },
+    totalCount,
+    pageSize
+  );
+
+  // Get phones with filters and pagination
   const phones = await db.phone.findMany({
-    where: filter,
+    where,
     include: {
       brand: true,
       vendorPrices: {
-        include: {
-          vendor: true,
-        },
-        orderBy: {
-          price: "asc",
-        },
-        take: 1, // Get the lowest price for each phone
+        orderBy: { pricePKR: "asc" },
+        take: 1,
       },
     },
-    orderBy,
+    orderBy: { name: "asc" },
+    take,
     skip,
-    take: pageSize,
   });
 
-  // Get total count for pagination
-  const total = await db.phone.count({ where: filter });
-  const totalPages = Math.ceil(total / pageSize);
-
-  return (
-    <PhonesList
-      phones={phones}
-      currentPage={parseInt(searchParams.page || "1")}
-      totalPages={totalPages}
-    />
+  const paginationMeta = createPaginationMeta(
+    currentPage,
+    totalCount,
+    pageSize
   );
+
+  return {
+    phones,
+    totalCount,
+    pagination: paginationMeta,
+  };
+}
+
+async function getBrands() {
+  return await db.brand.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
+}
+
+export default async function PhonesPage({ searchParams }: PhonesPageProps) {
+  const params = await searchParams;
+  const filters = parseSearchParams(
+    params as { [key: string]: string | string[] | undefined }
+  );
+  const viewMode = params.view || "grid";
+
+  try {
+    const [{ phones, totalCount, pagination }, brands] = await Promise.all([
+      getPhones(filters),
+      getBrands(),
+    ]);
+
+    return (
+      <div className="container mx-auto px-4 py-8">
+        {/* Header Section */}
+        <div className="flex flex-col gap-6 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold">Mobile Phones</h1>
+              <p className="text-neutral-600 dark:text-neutral-400">
+                Discover {totalCount.toLocaleString()} smartphones with detailed
+                specifications
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Filters Button (Mobile) */}
+              <FiltersSheet
+                brands={brands.map((brand) => ({
+                  ...brand,
+                  id: brand.id.toString(),
+                }))}
+                currentFilters={filters}
+                totalCount={totalCount}
+              />
+
+              {/* View Toggle */}
+              <div className="hidden sm:flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 rounded-lg p-1">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  asChild
+                >
+                  <Link
+                    href={`?${new URLSearchParams({ ...params, view: "grid" }).toString()}`}
+                  >
+                    <Grid className="w-4 h-4" />
+                  </Link>
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  asChild
+                >
+                  <Link
+                    href={`?${new URLSearchParams({ ...params, view: "list" }).toString()}`}
+                  >
+                    <List className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Filters Summary */}
+          {(filters.brand ||
+            filters.min ||
+            filters.max ||
+            filters.ram ||
+            filters.fiveG) && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm font-medium">Active filters:</span>
+              {filters.brand && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  Brand: {filters.brand}
+                </span>
+              )}
+              {filters.ram && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                  RAM: {filters.ram}GB
+                </span>
+              )}
+              {(filters.min || filters.max) && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                  Price:{" "}
+                  {filters.min
+                    ? `Rs ${parseInt(filters.min).toLocaleString()}`
+                    : "0"}{" "}
+                  -{" "}
+                  {filters.max
+                    ? `Rs ${parseInt(filters.max).toLocaleString()}`
+                    : "∞"}
+                </span>
+              )}
+              {filters.fiveG && (
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
+                  5G: {filters.fiveG === "true" ? "Yes" : "No"}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Results */}
+        <Suspense fallback={<PhonesGridSkeleton viewMode={viewMode} />}>
+          <PhonesGrid
+            phones={phones.map((phone) => ({
+              ...phone,
+              id: phone.id.toString(),
+            }))}
+            viewMode={viewMode}
+          />
+        </Suspense>
+
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <div className="mt-12">
+            <PaginationControls
+              pagination={pagination}
+              searchParams={params as Record<string, string | undefined>}
+              basePath="/phones"
+            />
+          </div>
+        )}
+      </div>
+    );
+  } catch (error) {
+    console.error("Error loading phones:", error);
+
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold mb-4">Something went wrong</h1>
+          <p className="text-neutral-600 dark:text-neutral-400 mb-6">
+            We encountered an error while loading the phones.
+          </p>
+          <Button asChild>
+            <Link href="/phones">Try Again</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 }

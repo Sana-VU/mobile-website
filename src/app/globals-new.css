@@ -1,0 +1,281 @@
+/* Import Google Fonts - Inter as primary font family */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+
+/* Import Tailwind CSS utilities */
+@import "tailwindcss";
+
+/* 
+ * CSS Custom Properties (Design Tokens)
+ * Base color scale: Zinc with #2563EB primary
+ * Light mode semantic tokens
+ */
+:root {
+  /* Base colors - Light mode using Zinc scale */
+  --background: 0 0% 100%; /* Pure white background */
+  --foreground: 240 10% 3.9%; /* Zinc 950 for text */
+
+  /* Card and surface colors */
+  --card: 0 0% 100%; /* White card background */
+  --card-foreground: 240 10% 3.9%; /* Zinc 950 for card text */
+
+  /* Border and input colors using Zinc scale */
+  --border: 240 5.9% 90%; /* Zinc 200 for borders */
+  --input: 240 5.9% 90%; /* Zinc 200 for inputs */
+  --ring: 221.2 83.2% 53.3%; /* Primary blue for focus rings */
+
+  /* Muted colors for subtle elements */
+  --muted: 240 4.8% 95.9%; /* Zinc 50 for muted backgrounds */
+  --muted-foreground: 240 3.8% 46.1%; /* Zinc 500 for muted text */
+
+  /* Primary color - #2563EB (Blue 600) */
+  --primary: 221.2 83.2% 53.3%; /* #2563EB */
+  --primary-foreground: 210 40% 98%; /* Near white for primary text */
+
+  /* Secondary colors */
+  --secondary: 240 4.8% 95.9%; /* Zinc 50 for secondary backgrounds */
+  --secondary-foreground: 240 5.9% 10%; /* Zinc 900 for secondary text */
+
+  /* Destructive colors for errors */
+  --destructive: 0 84.2% 60.2%; /* Red 500 */
+  --destructive-foreground: 210 40% 98%; /* Near white for destructive text */
+
+  /* Accent colors */
+  --accent: 240 4.8% 95.9%; /* Zinc 50 for accents */
+  --accent-foreground: 240 5.9% 10%; /* Zinc 900 for accent text */
+
+  /* Popover colors */
+  --popover: 0 0% 100%; /* White for popovers */
+  --popover-foreground: 240 10% 3.9%; /* Zinc 950 for popover text */
+}
+
+/*
+ * Dark mode color tokens
+ * Using Zinc scale with adjusted primary for better contrast
+ */
+.dark {
+  /* Base colors - Dark mode using Zinc scale */
+  --background: 240 10% 3.9%; /* Zinc 950 background */
+  --foreground: 0 0% 98%; /* Near white text */
+
+  /* Card and surface colors */
+  --card: 240 10% 3.9%; /* Zinc 950 for cards */
+  --card-foreground: 0 0% 98%; /* Near white for card text */
+
+  /* Border and input colors */
+  --border: 240 3.7% 15.9%; /* Zinc 800 for borders */
+  --input: 240 3.7% 15.9%; /* Zinc 800 for inputs */
+  --ring: 217.2 91.2% 59.8%; /* Lighter blue for dark mode focus */
+
+  /* Muted colors */
+  --muted: 240 3.7% 15.9%; /* Zinc 800 for muted backgrounds */
+  --muted-foreground: 240 5% 64.9%; /* Zinc 400 for muted text */
+
+  /* Primary color - Lighter blue for dark mode */
+  --primary: 217.2 91.2% 59.8%; /* Blue 400 for better dark contrast */
+  --primary-foreground: 222.2 84% 4.9%; /* Very dark blue for primary text */
+
+  /* Secondary colors */
+  --secondary: 240 3.7% 15.9%; /* Zinc 800 for secondary backgrounds */
+  --secondary-foreground: 0 0% 98%; /* Near white for secondary text */
+
+  /* Destructive colors */
+  --destructive: 0 62.8% 30.6%; /* Darker red for dark mode */
+  --destructive-foreground: 0 0% 98%; /* Near white for destructive text */
+
+  /* Accent colors */
+  --accent: 240 3.7% 15.9%; /* Zinc 800 for accents */
+  --accent-foreground: 0 0% 98%; /* Near white for accent text */
+
+  /* Popover colors */
+  --popover: 240 10% 3.9%; /* Zinc 950 for popovers */
+  --popover-foreground: 0 0% 98%; /* Near white for popover text */
+}
+
+/*
+ * Base layer styles
+ * Sets up foundational styling for the application
+ */
+* {
+  border-color: hsl(var(--border));
+}
+
+/* Body styling with Inter font and safe area support */
+body {
+  background: white;
+  color: #09090b;
+  /* Use Inter as the primary font family */
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  /* Enable font smoothing for better rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Add safe area padding for mobile devices */
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+.dark body {
+  background: #09090b;
+  color: #fafafa;
+}
+
+/* Typography hierarchy with consistent styling */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+h1 {
+  font-size: 2.25rem;
+}
+
+h2 {
+  font-size: 1.875rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+h5 {
+  font-size: 1.125rem;
+}
+
+h6 {
+  font-size: 1rem;
+}
+
+/* Paragraph and text styling */
+p {
+  color: hsl(var(--muted-foreground));
+  line-height: 1.625;
+}
+
+/* Link styling with smooth transitions */
+a {
+  color: hsl(var(--primary));
+  text-underline-offset: 4px;
+  transition: colors 0.15s ease-in-out;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  text-decoration: underline;
+}
+
+/* Button focus styles */
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px hsl(var(--ring)),
+    0 0 0 4px hsl(var(--background));
+}
+
+/* Form element styling */
+input,
+textarea,
+select {
+  transition: colors 0.15s ease-in-out;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--ring));
+}
+
+/* Enhanced shadow utilities */
+.shadow-soft {
+  box-shadow:
+    0 2px 8px -2px rgba(0, 0, 0, 0.04),
+    0 4px 16px -4px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-elevated {
+  box-shadow:
+    0 4px 16px -4px rgba(0, 0, 0, 0.08),
+    0 8px 24px -8px rgba(0, 0, 0, 0.12);
+}
+
+.shadow-floating {
+  box-shadow:
+    0 8px 32px -8px rgba(0, 0, 0, 0.12),
+    0 16px 48px -12px rgba(0, 0, 0, 0.16);
+}
+
+/* Animation keyframes */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+/* Responsive animation controls */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-scale-in {
+    animation: none;
+  }
+}

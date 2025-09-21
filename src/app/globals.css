@@ -1,185 +1,293 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* Import Google Fonts - Inter as primary font family */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
-@custom-variant dark (&:is(.dark *));
+/* Tailwind CSS directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Updated design tokens for the Zinc + Blue system */
+/* 
+ * CSS Custom Properties (Design Tokens)
+ * Base color scale: Zinc with #2563EB primary
+ * Light mode semantic tokens
+ */
 :root {
-  --radius: 1.25rem;
-  --elevation-soft:
-    0 18px 40px -24px rgba(37, 99, 235, 0.28),
-    0 8px 24px -16px rgba(24, 24, 27, 0.24);
-  --elevation-soft-hover:
-    0 22px 50px -24px rgba(37, 99, 235, 0.35),
-    0 12px 32px -12px rgba(24, 24, 27, 0.28);
+  /* Base colors - Light mode using Zinc scale */
+  --background: 0 0% 100%; /* Pure white background */
+  --foreground: 240 10% 3.9%; /* Zinc 950 for text */
 
-  --background: #f8fafc;
-  --foreground: #18181b;
-  --surface: #f4f4f5;
-  --surface-foreground: #18181b;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --popover: #ffffff;
-  --popover-foreground: #18181b;
-  --primary: #2563eb;
-  --primary-foreground: #f8fafc;
-  --secondary: #1d4ed8;
-  --secondary-foreground: #f8fafc;
-  --muted: #e4e4e7;
-  --muted-foreground: #71717a;
-  --accent: rgba(37, 99, 235, 0.12);
-  --accent-foreground: #1e3a8a;
-  --destructive: #ef4444;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
-  --ring: rgba(37, 99, 235, 0.45);
-  --text-strong: #0b1220;
-  --text-muted: #71717a;
-  --text-subtle: #a1a1aa;
+  /* Card and surface colors */
+  --card: 0 0% 100%; /* White card background */
+  --card-foreground: 240 10% 3.9%; /* Zinc 950 for card text */
 
-  --chart-1: #2563eb;
-  --chart-2: #22d3ee;
-  --chart-3: #a855f7;
-  --chart-4: #f97316;
-  --chart-5: #10b981;
+  /* Border and input colors using Zinc scale */
+  --border: 240 5.9% 90%; /* Zinc 200 for borders */
+  --input: 240 5.9% 90%; /* Zinc 200 for inputs */
+  --ring: 221.2 83.2% 53.3%; /* Primary blue for focus rings */
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #18181b;
-  --sidebar-primary: #2563eb;
-  --sidebar-primary-foreground: #f8fafc;
-  --sidebar-accent: rgba(37, 99, 235, 0.08);
-  --sidebar-accent-foreground: #1e3a8a;
-  --sidebar-border: #e4e4e7;
-  --sidebar-ring: rgba(37, 99, 235, 0.4);
+  /* Muted colors for subtle elements */
+  --muted: 240 4.8% 95.9%; /* Zinc 50 for muted backgrounds */
+  --muted-foreground: 240 3.8% 46.1%; /* Zinc 500 for muted text */
+
+  /* Primary color - #2563EB (Blue 600) */
+  --primary: 221.2 83.2% 53.3%; /* #2563EB */
+  --primary-foreground: 210 40% 98%; /* Near white for primary text */
+
+  /* Secondary colors */
+  --secondary: 240 4.8% 95.9%; /* Zinc 50 for secondary backgrounds */
+  --secondary-foreground: 240 5.9% 10%; /* Zinc 900 for secondary text */
+
+  /* Destructive colors for errors */
+  --destructive: 0 84.2% 60.2%; /* Red 500 */
+  --destructive-foreground: 210 40% 98%; /* Near white for destructive text */
+
+  /* Accent colors */
+  --accent: 240 4.8% 95.9%; /* Zinc 50 for accents */
+  --accent-foreground: 240 5.9% 10%; /* Zinc 900 for accent text */
+
+  /* Popover colors */
+  --popover: 0 0% 100%; /* White for popovers */
+  --popover-foreground: 240 10% 3.9%; /* Zinc 950 for popover text */
 }
 
+/*
+ * Dark mode color tokens
+ * Using Zinc scale with adjusted primary for better contrast
+ */
 .dark {
-  --background: #09090b;
-  --foreground: #f4f4f5;
-  --surface: #111827;
-  --surface-foreground: #f4f4f5;
-  --card: #18181b;
-  --card-foreground: #f9fafb;
-  --popover: #18181b;
-  --popover-foreground: #f9fafb;
-  --primary: #3b82f6;
-  --primary-foreground: #0b1220;
-  --secondary: #1d4ed8;
-  --secondary-foreground: #f8fafc;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: rgba(59, 130, 246, 0.22);
-  --accent-foreground: #dbeafe;
-  --destructive: #f87171;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: rgba(59, 130, 246, 0.55);
-  --text-strong: #f9fafb;
-  --text-muted: #a1a1aa;
-  --text-subtle: #71717a;
+  /* Base colors - Dark mode using Zinc scale */
+  --background: 240 10% 3.9%; /* Zinc 950 background */
+  --foreground: 0 0% 98%; /* Near white text */
 
-  --chart-1: #60a5fa;
-  --chart-2: #22d3ee;
-  --chart-3: #c084fc;
-  --chart-4: #fb923c;
-  --chart-5: #34d399;
+  /* Card and surface colors */
+  --card: 240 10% 3.9%; /* Zinc 950 for cards */
+  --card-foreground: 0 0% 98%; /* Near white for card text */
 
-  --sidebar: #111827;
-  --sidebar-foreground: #f4f4f5;
-  --sidebar-primary: #60a5fa;
-  --sidebar-primary-foreground: #0b1220;
-  --sidebar-accent: rgba(59, 130, 246, 0.18);
-  --sidebar-accent-foreground: #e0f2fe;
-  --sidebar-border: #1f2937;
-  --sidebar-ring: rgba(59, 130, 246, 0.55);
+  /* Border and input colors */
+  --border: 240 3.7% 15.9%; /* Zinc 800 for borders */
+  --input: 240 3.7% 15.9%; /* Zinc 800 for inputs */
+  --ring: 217.2 91.2% 59.8%; /* Lighter blue for dark mode focus */
+
+  /* Muted colors */
+  --muted: 240 3.7% 15.9%; /* Zinc 800 for muted backgrounds */
+  --muted-foreground: 240 5% 64.9%; /* Zinc 400 for muted text */
+
+  /* Primary color - Lighter blue for dark mode */
+  --primary: 217.2 91.2% 59.8%; /* Blue 400 for better dark contrast */
+  --primary-foreground: 222.2 84% 4.9%; /* Very dark blue for primary text */
+
+  /* Secondary colors */
+  --secondary: 240 3.7% 15.9%; /* Zinc 800 for secondary backgrounds */
+  --secondary-foreground: 0 0% 98%; /* Near white for secondary text */
+
+  /* Destructive colors */
+  --destructive: 0 62.8% 30.6%; /* Darker red for dark mode */
+  --destructive-foreground: 0 0% 98%; /* Near white for destructive text */
+
+  /* Accent colors */
+  --accent: 240 3.7% 15.9%; /* Zinc 800 for accents */
+  --accent-foreground: 0 0% 98%; /* Near white for accent text */
+
+  /* Popover colors */
+  --popover: 240 10% 3.9%; /* Zinc 950 for popovers */
+  --popover-foreground: 0 0% 98%; /* Near white for popover text */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-geist-mono);
-  --color-surface: var(--surface);
-  --color-surface-foreground: var(--surface-foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --radius-sm: calc(var(--radius) - 6px);
-  --radius-md: calc(var(--radius) - 4px);
-  --radius-lg: calc(var(--radius) - 2px);
-  --radius-xl: var(--radius);
-}
-
+/*
+ * Base layer styles
+ * Sets up foundational styling for the application
+ */
 @layer base {
-  * {
-    @apply border-border outline-ring/40;
+  /* Global box-sizing and focus styles */
+  *,
+  *::before,
+  *::after {
+    border-color: hsl(var(--border));
   }
 
+  /* Body styling with Inter font and safe area support */
   body {
-    /* Soften the background and provide safe-area padding */
-    @apply min-h-screen bg-background text-foreground antialiased;
-    background-image:
-      radial-gradient(
-        circle at 20% -10%,
-        rgba(37, 99, 235, 0.08),
-        transparent 55%
-      ),
-      radial-gradient(
-        circle at 80% 0%,
-        rgba(37, 99, 235, 0.06),
-        transparent 50%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(24, 24, 27, 0.02) 0%,
-        rgba(24, 24, 27, 0.06) 100%
-      );
-    padding: env(safe-area-inset-top) env(safe-area-inset-right)
-      calc(env(safe-area-inset-bottom)) env(safe-area-inset-left);
+    @apply bg-background text-foreground font-sans antialiased;
+    /* Add safe area padding for mobile devices */
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
   }
 
+  /* Typography hierarchy with consistent styling */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-semibold text-foreground;
+    @apply text-foreground font-semibold tracking-tight;
   }
 
+  h1 {
+    @apply text-4xl lg:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  h4 {
+    @apply text-xl lg:text-2xl;
+  }
+
+  h5 {
+    @apply text-lg lg:text-xl;
+  }
+
+  h6 {
+    @apply text-base lg:text-lg;
+  }
+
+  /* Paragraph and text styling */
   p {
-    @apply text-base text-muted-foreground;
+    @apply text-muted-foreground leading-relaxed;
+  }
+
+  /* Link styling with smooth transitions */
+  a {
+    @apply text-primary underline-offset-4 transition-colors hover:underline focus-visible:underline;
+  }
+
+  /* Button focus styles */
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Form element styling */
+  input,
+  textarea,
+  select {
+    @apply transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
   }
 }
-
+/*
+ * Utility layer for custom utilities and component styles
+ * Enhanced shadows and transition utilities
+ */
 @layer utilities {
-  /* Utility to apply the soft shadow consistently */
-  .shadow-soft {
-    box-shadow: var(--elevation-soft);
+  /* Container padding utilities */
+  .container-padding {
+    @apply px-4 sm:px-6 lg:px-8 xl:px-12;
   }
 
-  .hover\:shadow-soft-hover:hover {
-    box-shadow: var(--elevation-soft-hover);
+  /* Enhanced shadow utilities */
+  .shadow-soft {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-soft-hover {
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-elevated {
+    box-shadow:
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .shadow-inner-soft {
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  }
+
+  /* Transition utilities for smooth interactions */
+  .transition-all-soft {
+    @apply transition-all duration-soft ease-soft-spring;
+  }
+
+  .transition-colors-fast {
+    @apply transition-colors duration-fast ease-gentle;
+  }
+
+  .transition-transform-soft {
+    @apply transition-transform duration-soft ease-soft-spring;
+  }
+
+  /* Border radius utilities with 2xl support */
+  .rounded-card {
+    @apply rounded-2xl; /* 24px - Featured card radius */
+  }
+
+  .rounded-button {
+    @apply rounded-xl; /* 16px - Button radius */
+  }
+
+  .rounded-input {
+    @apply rounded-lg; /* 12px - Input radius */
+  }
+
+  /* Focus utilities for better accessibility */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Text utilities with zinc-based colors */
+  .text-primary-strong {
+    @apply text-primary font-semibold;
+  }
+
+  .text-muted-subtle {
+    @apply text-muted-foreground/70;
+  }
+
+  /* Background utilities for cards and surfaces */
+  .bg-card-soft {
+    @apply bg-card/80 backdrop-blur-sm;
+  }
+
+  .bg-muted-soft {
+    @apply bg-muted/50;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    @apply animate-fade-in;
+  }
+
+  .animate-slide-up {
+    @apply animate-slide-up;
+  }
+
+  .animate-scale-in {
+    @apply animate-scale-in;
+  }
+
+  /* Safe area utilities for mobile devices */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .safe-area-all {
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
   }
 }
