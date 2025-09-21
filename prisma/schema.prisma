@@ -43,7 +43,15 @@ model Phone {
 
   @@index([brandId])
   @@index([ramGB])
+  @@index([storageGB])
   @@index([fiveG])
+  @@index([batteryMAh])
+  @@index([releaseYear])
+  @@index([ptaApproved])
+  @@index([displayInch])
+  @@index([ramGB, storageGB])
+  @@index([fiveG, ptaApproved])
+  @@index([brandId, releaseYear])
 }
 
 model Vendor {
@@ -67,6 +75,8 @@ model VendorPrice {
   updatedAt DateTime @updatedAt
 
   @@index([pricePKR])
+  @@index([phoneId, pricePKR])
+  @@index([vendorId, pricePKR])
   @@unique([phoneId, vendorId])
 }
 

@@ -35,7 +35,7 @@ export default function OfflinePage() {
           </div>
 
           {/* Offline Content */}
-          <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 mb-8 shadow-lg border border-neutral-200 dark:border-neutral-700">
+          <div className="bg-card rounded-2xl p-8 mb-8 shadow-lg border border-border">
             <Prose className="text-left">
               <h2>What you can do:</h2>
               <ul>

@@ -6,11 +6,11 @@ import { SimpleFilters } from "@/components/phones/simple-filters";
 import { ResultsToolbar } from "@/components/phones/results-toolbar";
 import { PhoneCardsGrid } from "@/components/phones/phone-cards-grid";
 import { Pagination } from "@/components/phones/pagination";
-import {
-  getPhones,
-  getBrandsWithCounts,
+import { 
+  getPhones, 
+  getBrandsWithCounts, 
   extractActiveFilters,
-  type PhoneFilters,
+  type PhoneFilters 
 } from "@/lib/phones.query";
 
 export const metadata: Metadata = {
@@ -34,14 +34,7 @@ interface SearchParams {
   batteryMax?: string;
   fiveG?: string;
   ptaApproved?: string;
-  sort?:
-    | "relevance"
-    | "newest"
-    | "price-asc"
-    | "price-desc"
-    | "ram"
-    | "battery"
-    | "camera";
+  sort?: "relevance" | "newest" | "price-asc" | "price-desc" | "ram" | "battery" | "camera";
   view?: "grid" | "list";
 }
 
@@ -56,38 +49,79 @@ export default async function PhoneFinderPage({
   const viewMode = params.view || "grid";
   const currentPage = parseInt(params.page || "1");
   const pageSize = 20;
+  const skip = (currentPage - 1) * pageSize;
 
-  // Convert search params to phone filters
-  const filters: PhoneFilters = {
-    brand: params.brand,
-    minPrice: params.minPrice,
-    maxPrice: params.maxPrice,
-    ram: params.ram,
-    storage: params.storage,
-    chipsetVendor: params.chipsetVendor,
-    displaySize: params.displaySize,
-    batteryMin: params.batteryMin,
-    batteryMax: params.batteryMax,
-    fiveG: params.fiveG,
-    ptaApproved: params.ptaApproved,
-    sort: params.sort || "relevance",
-    view: viewMode,
-  };
+  // Fetch phones data
+  const phones = await db.phone.findMany({
+    include: {
+      brand: true,
+      vendorPrices: {
+        include: {
+          vendor: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: { pricePKR: "asc" },
+      },
+    },
+    skip: skip,
+    take: pageSize,
+  });
 
-  // Fetch data using the optimized query functions
-  const [phoneResults, brands] = await Promise.all([
-    getPhones(filters, { page: currentPage, pageSize }),
-    getBrandsWithCounts(),
-  ]);
+  const brands = await db.brand.findMany({
+    select: { id: true, name: true, slug: true },
+    orderBy: { name: "asc" },
+  });
 
-  const { phones, totalCount, totalPages } = phoneResults;
+  const totalCount = await db.phone.count();
+  const totalPages = Math.ceil(totalCount / pageSize);
 
-  // Extract active filters for the toolbar
-  const activeFilters = extractActiveFilters(filters);
+  // Create active filters array for the toolbar
+  const activeFilters = [];
+  if (params.brand) {
+    activeFilters.push({
+      key: "brand",
+      label: `Brand: ${params.brand}`,
+      value: params.brand,
+    });
+  }
+  if (params.minPrice) {
+    activeFilters.push({
+      key: "minPrice",
+      label: `Min: PKR ${parseInt(params.minPrice).toLocaleString()}`,
+      value: params.minPrice,
+    });
+  }
+  if (params.maxPrice) {
+    activeFilters.push({
+      key: "maxPrice",
+      label: `Max: PKR ${parseInt(params.maxPrice).toLocaleString()}`,
+      value: params.maxPrice,
+    });
+  }
+  if (params.ram) {
+    activeFilters.push({
+      key: "ram",
+      label: `RAM: ${params.ram}GB`,
+      value: params.ram,
+    });
+  }
+  if (params.storage) {
+    activeFilters.push({
+      key: "storage",
+      label: `Storage: ${params.storage}GB`,
+      value: params.storage,
+    });
+  }
+  if (params.fiveG === "true") {
+    activeFilters.push({ key: "fiveG", label: "5G Enabled", value: "true" });
+  }
 
   const currentSort = params.sort || "relevance";
 
-  // Transform phones data to match the expected interface for cards
+  // Transform phones data to match the expected interface
   const transformedPhones = phones.map((phone) => ({
     ...phone,
     chipset: phone.chipset || undefined,
@@ -95,7 +129,7 @@ export default async function PhoneFinderPage({
       id: vp.id,
       vendor: vp.vendor.name,
       pricePKR: vp.pricePKR,
-      availability: "available" as const,
+      availability: "available", // You might want to get this from your database
     })),
   }));
 
@@ -183,19 +217,6 @@ export default async function PhoneFinderPage({
 
             {/* Phone Cards */}
             <PhoneCardsGrid phones={transformedPhones} viewMode={viewMode} />
-
-            {/* No Results */}
-            {phones.length === 0 && (
-              <div className="text-center py-12">
-                <h3 className="text-lg font-semibold mb-2">No phones found</h3>
-                <p className="text-muted-foreground mb-4">
-                  Try adjusting your filters to see more results
-                </p>
-                <Button asChild variant="outline">
-                  <Link href="/phones">Clear all filters</Link>
-                </Button>
-              </div>
-            )}
 
             {/* Pagination */}
             <Pagination currentPage={currentPage} totalPages={totalPages} />

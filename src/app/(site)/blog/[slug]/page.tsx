@@ -7,13 +7,14 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 interface Props {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -45,7 +46,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: post.seo?.ogImage?.asset
         ? [
             {
-              url: urlForImage(post.seo.ogImage.asset).width(1200).height(630).url(),
+              url: urlForImage(post.seo.ogImage.asset)
+                .width(1200)
+                .height(630)
+                .url(),
               width: 1200,
               height: 630,
               alt: post.seo.ogImage.alt || post.title,
@@ -54,7 +58,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         : post.coverImage?.asset
           ? [
               {
-                url: urlForImage(post.coverImage.asset).width(1200).height(630).url(),
+                url: urlForImage(post.coverImage.asset)
+                  .width(1200)
+                  .height(630)
+                  .url(),
                 width: 1200,
                 height: 630,
                 alt: post.coverImage.alt || post.title,
@@ -69,7 +76,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.seo?.twitterTitle || post.title,
       description: post.seo?.twitterDescription || post.excerpt || post.title,
       images: post.seo?.twitterImage?.asset
-        ? [urlForImage(post.seo.twitterImage.asset).width(1200).height(630).url()]
+        ? [
+            urlForImage(post.seo.twitterImage.asset)
+              .width(1200)
+              .height(630)
+              .url(),
+          ]
         : post.coverImage?.asset
           ? [urlForImage(post.coverImage.asset).width(1200).height(630).url()]
           : [],
@@ -207,7 +219,8 @@ const portableTextComponents = {
 };
 
 export default async function BlogPostPage({ params }: Props) {
-  const post = await getPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     notFound();

@@ -3,10 +3,16 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, CheckCircle2, Smartphone, Cpu, Battery } from "lucide-react";
+
+// Import the premium components that already exist
+import { WishlistButton } from "@/components/ui/wishlist-button";
+import { VendorPriceCard } from "@/components/ui/vendor-price-card";
+import { PTATaxNote } from "@/components/ui/pta-tax-note";
+import { PriceHistoryChart } from "@/components/ui/price-history-chart";
+import { PriceHistoryTable } from "@/components/ui/price-history-table";
 
 // Generate metadata for SEO
 export async function generateMetadata({
@@ -34,7 +40,7 @@ export async function generateMetadata({
   };
 }
 
-// Get phone data by slug
+// Get phone data by slug with complete details
 async function getPhoneBySlug(slug: string) {
   const phone = await db.phone.findFirst({
     where: { slug },
@@ -47,6 +53,12 @@ async function getPhoneBySlug(slug: string) {
         orderBy: {
           pricePKR: "asc",
         },
+      },
+      priceHistory: {
+        orderBy: {
+          date: "desc",
+        },
+        take: 50, // Get last 50 price points for chart
       },
     },
   });
@@ -75,7 +87,7 @@ async function getRelatedPhones(brandId: number, currentPhoneId: number) {
         take: 1,
       },
     },
-    take: 4,
+    take: 6, // Show 6 related phones
     orderBy: {
       createdAt: "desc",
     },
@@ -150,8 +162,24 @@ export default async function PhoneDetailsPage({
   const structuredData = generateProductStructuredData(phone);
   const lowestPrice = phone.vendorPrices[0]?.pricePKR || 0;
 
-  // Determine if phone is PTA approved (for demo, we'll say 50% are)
-  const isPtaApproved = phone.id % 2 === 0;
+  // Determine if phone is PTA approved (checking ptaApproved field)
+  const isPtaApproved = phone.ptaApproved || phone.id % 2 === 0; // Fallback for demo
+
+  // Prepare price history data and stats (if available)
+  const priceHistory = phone.priceHistory || [];
+  const priceStats =
+    priceHistory.length > 0
+      ? {
+          currentPrice: priceHistory[0]?.pricePKR || lowestPrice,
+          lowestPrice: Math.min(...priceHistory.map((p) => p.pricePKR)),
+          highestPrice: Math.max(...priceHistory.map((p) => p.pricePKR)),
+          averagePrice: Math.round(
+            priceHistory.reduce((sum, p) => sum + p.pricePKR, 0) /
+              priceHistory.length
+          ),
+          totalEntries: priceHistory.length,
+        }
+      : null;
 
   return (
     <>
@@ -195,11 +223,25 @@ export default async function PhoneDetailsPage({
 
       <div className="container py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Image Gallery */}
+          {/* Enhanced Image Gallery */}
           <div className="space-y-4">
-            <div className="rounded-lg overflow-hidden bg-secondary/10 aspect-square flex items-center justify-center">
+            <div className="rounded-2xl overflow-hidden bg-gradient-to-br from-primary/5 via-primary/3 to-transparent aspect-square flex items-center justify-center relative">
               <div className="text-4xl font-semibold text-muted-foreground/50">
                 {phone.brand.name} {phone.name}
+              </div>
+              {/* Wishlist Button Overlay */}
+              <div className="absolute top-4 right-4">
+                <WishlistButton
+                  phone={{
+                    id: phone.id,
+                    name: phone.name,
+                    brand: phone.brand.name,
+                    price: lowestPrice,
+                  }}
+                  size="lg"
+                  variant="minimal"
+                  className="bg-white/80 backdrop-blur-sm shadow-lg"
+                />
               </div>
               {/* In a real app, you'd have actual images here */}
             </div>
@@ -207,7 +249,7 @@ export default async function PhoneDetailsPage({
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="aspect-square rounded bg-secondary/10"
+                  className="aspect-square rounded-lg bg-secondary/10 hover:bg-secondary/20 transition-colors cursor-pointer"
                 />
               ))}
             </div>
@@ -283,38 +325,29 @@ export default async function PhoneDetailsPage({
               </div>
             </div>
 
-            {/* Vendor Prices */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-xl">Available Prices</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {phone.vendorPrices.map((vp) => (
-                    <div
-                      key={vp.id}
-                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-secondary/10"
-                    >
-                      <div>
-                        <p className="font-medium">{vp.vendor.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Official Store
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {formatPrice(vp.pricePKR)}
-                        </p>
-                        {/* In a real app, this would use an actual affiliate URL */}
-                        <Button size="sm" className="mt-1">
-                          Buy Now
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Enhanced Vendor Prices */}
+            <div className="space-y-3">
+              {phone.vendorPrices.map((vp, index) => (
+                <VendorPriceCard
+                  key={vp.id}
+                  vendorName={vp.vendor.name}
+                  price={vp.pricePKR}
+                  href={`/vendor/${vp.vendor.slug}`}
+                  highlight={index === 0} // Highlight the lowest price
+                  updatedAt={vp.updatedAt.toLocaleDateString()}
+                />
+              ))}
+            </div>
+
+            {/* PTA Tax Information */}
+            {isPtaApproved && (
+              <PTATaxNote
+                phonePrice={lowestPrice || 0}
+                showCalculator={true}
+                variant="detailed"
+                className="mt-4"
+              />
+            )}
           </div>
         </div>
 
@@ -505,6 +538,42 @@ export default async function PhoneDetailsPage({
           </TabsContent>
         </Tabs>
 
+        {/* Price History Section */}
+        {priceHistory.length > 0 && priceStats && (
+          <div className="mt-10">
+            <h2 className="text-2xl font-semibold mb-6">Price History</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <PriceHistoryChart
+                  data={priceHistory.map((p) => ({
+                    id: p.id,
+                    pricePKR: p.pricePKR,
+                    source: p.source,
+                    date: p.date.toISOString().split("T")[0],
+                  }))}
+                  stats={{
+                    currentPrice: priceStats.currentPrice,
+                    lowestPrice: priceStats.lowestPrice,
+                    highestPrice: priceStats.highestPrice,
+                    averagePrice: priceStats.averagePrice,
+                    totalEntries: priceStats.totalEntries,
+                  }}
+                />
+              </div>
+              <div>
+                <PriceHistoryTable
+                  data={priceHistory.map((p) => ({
+                    id: p.id,
+                    pricePKR: p.pricePKR,
+                    source: p.source,
+                    date: p.date.toISOString().split("T")[0],
+                  }))}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Related Phones */}
         {relatedPhones.length > 0 && (
           <div className="mt-12">
@@ -513,10 +582,27 @@ export default async function PhoneDetailsPage({
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {relatedPhones.map((relatedPhone) => (
-                <Card key={relatedPhone.id} className="overflow-hidden">
-                  <div className="h-48 bg-secondary/20 flex items-center justify-center">
+                <Card
+                  key={relatedPhone.id}
+                  className="overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <div className="h-48 bg-secondary/20 flex items-center justify-center relative">
                     <div className="text-muted-foreground">
                       {relatedPhone.name}
+                    </div>
+                    {/* Wishlist Button for Related Phone */}
+                    <div className="absolute top-2 right-2">
+                      <WishlistButton
+                        phone={{
+                          id: relatedPhone.id,
+                          name: relatedPhone.name,
+                          brand: relatedPhone.brand.name,
+                          price: relatedPhone.vendorPrices?.[0]?.pricePKR ?? 0,
+                        }}
+                        size="sm"
+                        variant="minimal"
+                        className="bg-white/80 backdrop-blur-sm shadow-sm"
+                      />
                     </div>
                   </div>
                   <CardContent className="pt-4">

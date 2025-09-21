@@ -41,19 +41,19 @@ export function Footer() {
   };
 
   return (
-    <footer className="mt-auto border-t bg-neutral-50 dark:bg-neutral-900 safe-area-left safe-area-right">
+    <footer className="mt-auto border-t border-zinc-200 bg-[#006A67] dark:border-zinc-600 dark:bg-[#004d4a]">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {/* Explore Column */}
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
               Explore
             </h3>
             <ul className="mt-4 space-y-3">
               <li>
                 <Link
                   href="/phones"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Phones
                 </Link>
@@ -61,7 +61,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/brands"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Brands
                 </Link>
@@ -69,7 +69,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/compare"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Compare
                 </Link>
@@ -77,7 +77,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/blog"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Blog
                 </Link>
@@ -85,7 +85,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/search"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Search
                 </Link>
@@ -95,14 +95,14 @@ export function Footer() {
 
           {/* Company Column */}
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
               Company
             </h3>
             <ul className="mt-4 space-y-3">
               <li>
                 <Link
                   href="/about"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   About
                 </Link>
@@ -110,7 +110,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Contact
                 </Link>
@@ -120,14 +120,14 @@ export function Footer() {
 
           {/* Legal Column */}
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 uppercase tracking-wider">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider">
               Legal
             </h3>
             <ul className="mt-4 space-y-3">
               <li>
                 <Link
                   href="/privacy"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Privacy
                 </Link>
@@ -135,7 +135,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="text-sm text-neutral-600 hover:text-blue-600 dark:text-neutral-400 dark:hover:text-blue-400 transition-colors"
+                  className="text-sm text-white/80 hover:text-white transition-colors"
                 >
                   Terms
                 </Link>
@@ -145,22 +145,22 @@ export function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-8 border-t pt-8">
+        <div className="mt-8 border-t border-white/20 pt-8">
           <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0">
             {/* Copyright */}
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            <p className="text-sm text-white/80">
               © {new Date().getFullYear()} WhatMobile. All rights reserved.
             </p>
 
             {/* PWA Install Hint */}
             {showInstallHint && (
               <div className="flex items-center space-x-2">
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="text-sm text-white/80">
                   Install our app for better experience
                 </p>
                 <button
                   onClick={handleInstallClick}
-                  className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                  className="text-sm font-medium text-white hover:text-white/80 transition-colors underline"
                 >
                   Install
                 </button>

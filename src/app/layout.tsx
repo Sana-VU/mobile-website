@@ -35,11 +35,9 @@ export default function RootLayout({
         {/* ThemeProvider keeps the UI synced with light/dark preference */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <WishlistProvider>
-            <div className="relative flex min-h-screen flex-col bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-50">
+            <div className="relative flex min-h-screen flex-col bg-background text-foreground">
               <Header />
-              <main className="flex-1 pb-20 md:pb-0 safe-area-left safe-area-right">
-                {children}
-              </main>
+              <main className="flex-1 pb-20 md:pb-0">{children}</main>
               <Footer />
               <BottomNavWrapper />
             </div>

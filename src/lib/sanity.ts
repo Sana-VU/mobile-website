@@ -301,7 +301,9 @@ export async function getPostsByCategory(
     }
     return await sanityClient.fetch(POSTS_BY_CATEGORY_QUERY, { category });
   } catch {
-    console.warn("Sanity not configured, returning empty posts by category array");
+    console.warn(
+      "Sanity not configured, returning empty posts by category array"
+    );
     return [];
   }
 }

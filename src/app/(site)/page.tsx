@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
-import { LucideGrid, GitCompare, LucideFileText } from "lucide-react";
+import { LucideGrid, GitCompare, LucideFileText, Search } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -19,45 +19,39 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-24">
-      {/* Enhanced Hero Section */}
+      {/* Enhanced Hero Section with Premium Gradient */}
       <section className="w-full max-w-4xl text-center mb-12 relative">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-blue-50/30 to-violet-50/20 dark:from-primary/10 dark:via-blue-950/30 dark:to-violet-950/20 rounded-3xl"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent rounded-3xl"></div>
+        {/* Premium Blue to Violet Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-primary rounded-3xl opacity-90"></div>
+        <div className="absolute inset-0 bg-gradient-radial from-white/10 via-transparent to-transparent rounded-3xl"></div>
 
-        <div className="relative px-8 py-12 md:py-16">
-          {/* Hero Badge */}
-          <div className="inline-flex items-center px-4 py-2 mb-6 bg-accent/50 border border-border/30 rounded-full text-sm text-accent-foreground backdrop-blur-sm">
-            <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></span>
+        <div className="relative px-8 py-12 md:py-16 text-white">
+          {/* Hero Badge with Glass Morphism */}
+          <div className="inline-flex items-center px-4 py-2 mb-6 glass-morphism text-sm text-white/90 backdrop-blur-xl">
+            <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
             Find Your Perfect Mobile
           </div>
 
-          {/* Hero Heading */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-            <span className="bg-gradient-to-r from-foreground via-foreground to-primary bg-clip-text text-transparent">
-              Discover.
-            </span>{" "}
-            <span className="bg-gradient-to-r from-primary via-blue-600 to-violet-500 bg-clip-text text-transparent">
-              Compare.
-            </span>{" "}
-            <span className="bg-gradient-to-r from-violet-500 via-primary to-foreground bg-clip-text text-transparent">
-              Decide.
-            </span>
+          {/* Premium Hero Heading */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 tracking-tight">
+            <span className="text-white">Discover.</span>{" "}
+            <span className="text-white/90">Compare.</span>{" "}
+            <span className="text-white">Decide.</span>
           </h1>
 
           {/* Hero Description */}
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
             Your ultimate destination for mobile phone reviews, comparisons, and
             buying guides. Make informed decisions with our comprehensive
             database.
           </p>
 
-          {/* CTA Buttons */}
+          {/* Premium CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
               asChild
-              className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 px-8 py-4 text-lg font-semibold rounded-2xl group min-w-[200px]"
+              className="btn-primary text-lg font-semibold px-8 py-4 rounded-2xl min-w-[200px] group shadow-premium hover:shadow-2xl"
             >
               <Link href="/phones">
                 <span className="flex items-center">
@@ -83,10 +77,44 @@ export default function HomePage() {
               variant="outline"
               size="lg"
               asChild
-              className="border-2 hover:bg-accent/50 transition-all duration-300 px-8 py-4 text-lg rounded-2xl min-w-[200px]"
+              className="btn-outline text-lg px-8 py-4 rounded-2xl min-w-[200px] bg-white/10 border-white/30 text-white backdrop-blur-sm hover:bg-white/20 transition-all duration-300"
             >
               <Link href="/compare">Compare Phones</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Search Section */}
+      <section className="w-full max-w-2xl mb-16">
+        <div className="card-premium bg-background/95 backdrop-blur-xl border border-border/50 rounded-3xl p-8 shadow-premium">
+          <div className="flex flex-col items-center mb-6">
+            <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4">
+              <Search className="w-6 h-6 text-white" />
+            </div>
+            <h2 className="text-2xl font-semibold text-center text-foreground">
+              Quick Search
+            </h2>
+            <p className="text-muted-foreground text-center mt-2">
+              Find your perfect device instantly
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Premium Search Input */}
+            <div className="relative flex-1">
+              <div className="absolute inset-0 bg-gradient-primary rounded-xl opacity-5"></div>
+              <input
+                type="text"
+                placeholder="Search mobiles, brands, features..."
+                className="relative w-full bg-background/60 border border-border/40 h-12 px-4 rounded-xl text-base backdrop-blur-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 placeholder:text-muted-foreground/60"
+              />
+            </div>
+            {/* Premium Search Button */}
+            <button className="btn-primary h-12 px-8 font-semibold tracking-wide flex items-center justify-center gap-2 rounded-xl transition-all duration-300 hover:scale-105">
+              <Search className="w-4 h-4" />
+              Search
+            </button>
           </div>
         </div>
       </section>
@@ -111,17 +139,15 @@ function Card({
   href: string;
 }) {
   const iconColors = {
-    grid: "text-emerald-500",
+    grid: "text-success",
     compare: "text-primary",
-    article: "text-violet-500",
+    article: "text-secondary",
   };
 
-  const backgroundGradients = {
-    grid: "from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20",
-    compare:
-      "from-blue-50 to-blue-100/50 dark:from-blue-950/30 dark:to-blue-900/20",
-    article:
-      "from-violet-50 to-violet-100/50 dark:from-violet-950/30 dark:to-violet-900/20",
+  const gradientBgs = {
+    grid: "bg-gradient-to-br from-success/10 to-success/5",
+    compare: "bg-gradient-to-br from-primary/10 to-primary/5",
+    article: "bg-gradient-to-br from-secondary/10 to-secondary/5",
   };
 
   const icons: Record<string, React.ReactNode> = {
@@ -151,52 +177,54 @@ function Card({
   return (
     <Link
       href={href}
-      className={`relative group overflow-hidden rounded-2xl bg-gradient-to-br ${backgroundGradients[icon as keyof typeof backgroundGradients]} border border-border/40 shadow-soft hover:shadow-soft-hover transition-all duration-300 hover:-translate-y-1`}
+      className={`card-premium group overflow-hidden rounded-3xl border border-border/30 shadow-premium hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 ${gradientBgs[icon as keyof typeof gradientBgs]}`}
     >
-      {/* Card Content */}
-      <div className="relative p-8 flex flex-col items-center justify-center text-center min-h-[160px] backdrop-blur-sm">
-        {/* Icon Container */}
-        <div className="mb-4 p-3 rounded-2xl bg-background/60 shadow-sm group-hover:shadow-md transition-all duration-300">
+      {/* Premium Card Content */}
+      <div className="relative p-8 flex flex-col items-center justify-center text-center min-h-[180px] backdrop-blur-sm">
+        {/* Premium Icon Container */}
+        <div className="mb-6 p-4 rounded-2xl bg-background/80 shadow-premium group-hover:shadow-xl transition-all duration-300 border border-border/20">
           {icons[icon]}
         </div>
 
-        {/* Title */}
-        <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-200">
+        {/* Premium Title */}
+        <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300 tracking-tight">
           {title}
         </h3>
 
-        {/* Description */}
-        <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors duration-200">
+        {/* Premium Description */}
+        <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors duration-300 leading-relaxed">
           {descriptions[title as keyof typeof descriptions]}
         </p>
 
-        {/* Hover Arrow */}
-        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-          <svg
-            className="w-5 h-5 text-primary"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 7l5 5m0 0l-5 5m5-5H6"
-            />
-          </svg>
+        {/* Premium Hover Arrow */}
+        <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
+          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <svg
+              className="w-4 h-4 text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </div>
         </div>
       </div>
 
-      {/* Subtle bottom accent line */}
+      {/* Premium Accent Border */}
       <div
-        className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${
+        className={`absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
           icon === "grid"
-            ? "from-emerald-400 to-emerald-600"
+            ? "ring-2 ring-success/30"
             : icon === "compare"
-              ? "from-primary to-blue-600"
-              : "from-violet-400 to-violet-600"
-        } opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+              ? "ring-2 ring-primary/30"
+              : "ring-2 ring-secondary/30"
+        }`}
       ></div>
     </Link>
   );

@@ -1,4 +1,4 @@
-/* Import Google Fonts - Inter as primary font family */
+/* Import Google Fonts - Inter as primary font family with variable weights */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 /* Tailwind CSS directives */
@@ -7,77 +7,330 @@
 @tailwind utilities;
 
 /* 
- * CSS Custom Properties (Design Tokens)
- * Base color scale: Zinc with #2563EB primary
- * Light mode semantic tokens
+ * Premium Design System - CSS Custom Properties
+ * Primary: #2563EB (blue-600), Hover: blue-700
+ * Secondary: #7C3AED (violet-600) for accents/chips
+ * Success: #10B981, Warning: #F59E0B, Error: #EF4444
+ * Neutrals: Tailwind Zinc scale for bg/surfaces/borders
+ * Typography: Inter, tight headings, tabular-nums for numbers
+ * UI: Soft shadows, rounded-2xl, subtle transitions
  */
+
+/* ===== LIGHT MODE DESIGN TOKENS ===== */
 :root {
-  /* Base colors - Light mode using Zinc scale */
+  /* Base Background & Foreground - Clean, app-like neutrals */
   --background: 0 0% 100%; /* Pure white background */
-  --foreground: 240 10% 3.9%; /* Zinc 950 for text */
+  --foreground: 210 11% 15%; /* #111827 - Strong text color */
 
-  /* Card and surface colors */
-  --card: 0 0% 100%; /* White card background */
-  --card-foreground: 240 10% 3.9%; /* Zinc 950 for card text */
+  /* Card & Surface Colors - Layered interface depth */
+  --card: 0 0% 100%; /* White cards for content */
+  --card-foreground: 210 11% 15%; /* #111827 - Strong text on cards */
 
-  /* Border and input colors using Zinc scale */
-  --border: 240 5.9% 90%; /* Zinc 200 for borders */
-  --input: 240 5.9% 90%; /* Zinc 200 for inputs */
-  --ring: 221.2 83.2% 53.3%; /* Primary blue for focus rings */
+  /* Interactive Elements - Professional borders and inputs */
+  --border: 220 13% 91%; /* Zinc 200 - Subtle borders */
+  --input: 220 13% 91%; /* Zinc 200 - Input backgrounds */
+  --ring: 221.2 83.2% 53.3%; /* #2563EB - Focus ring (Primary) */
 
-  /* Muted colors for subtle elements */
-  --muted: 240 4.8% 95.9%; /* Zinc 50 for muted backgrounds */
-  --muted-foreground: 240 3.8% 46.1%; /* Zinc 500 for muted text */
+  /* Muted Content - Secondary information hierarchy */
+  --muted: 220 14.3% 95.9%; /* Zinc 50 - Subtle backgrounds */
+  --muted-foreground: 220 8.9% 46.1%; /* #6B7280 - Muted text */
 
-  /* Primary color - #2563EB (Blue 600) */
-  --primary: 221.2 83.2% 53.3%; /* #2563EB */
-  --primary-foreground: 210 40% 98%; /* Near white for primary text */
+  /* Primary Brand Color - Blue 600 (#2563EB) with Blue 700 hover */
+  --primary: 221.2 83.2% 53.3%; /* #2563EB - Primary blue-600 */
+  --primary-foreground: 210 40% 98%; /* White text on primary */
+  --primary-hover: 221.2 83.2% 46.1%; /* #1D4ED8 - Blue-700 for hover */
 
-  /* Secondary colors */
-  --secondary: 240 4.8% 95.9%; /* Zinc 50 for secondary backgrounds */
-  --secondary-foreground: 240 5.9% 10%; /* Zinc 900 for secondary text */
+  /* Secondary Brand Color - Violet 600 (#7C3AED) for accents/chips */
+  --secondary: 262.1 83.3% 57.8%; /* #7C3AED - Secondary violet-600 */
+  --secondary-foreground: 210 40% 98%; /* White text on secondary */
 
-  /* Destructive colors for errors */
-  --destructive: 0 84.2% 60.2%; /* Red 500 */
-  --destructive-foreground: 210 40% 98%; /* Near white for destructive text */
+  /* Status Colors - App-like feedback system */
+  --success: 158.1 64.4% 51.6%; /* #10B981 - Emerald 500 */
+  --success-foreground: 0 0% 100%; /* White text on success */
 
-  /* Accent colors */
-  --accent: 240 4.8% 95.9%; /* Zinc 50 for accents */
-  --accent-foreground: 240 5.9% 10%; /* Zinc 900 for accent text */
+  --warning: 43.3 96.4% 56.3%; /* #F59E0B - Amber 500 */
+  --warning-foreground: 0 0% 100%; /* White text on warning */
 
-  /* Popover colors */
-  --popover: 0 0% 100%; /* White for popovers */
-  --popover-foreground: 240 10% 3.9%; /* Zinc 950 for popover text */
+  --destructive: 0 84.2% 60.2%; /* #EF4444 - Red 500 */
+  --destructive-foreground: 210 40% 98%; /* White text on error */
+
+  /* Accent Colors - Highlights and selections */
+  --accent: 220 14.3% 95.9%; /* Zinc 50 - Light accent */
+  --accent-foreground: 220 8.9% 46.1%; /* Gray text on accent */
+
+  /* Popover & Modal Colors - Elevated surfaces */
+  --popover: 0 0% 100%; /* White popovers */
+  --popover-foreground: 210 11% 15%; /* Strong text in popovers */
+}
+
+/* ===== DARK MODE DESIGN TOKENS ===== */
+.dark {
+  /* Base Background & Foreground - Rich dark theme */
+  --background: 224 71.4% 4.1%; /* Zinc 950 - Deep background */
+  --foreground: 210 20% 98%; /* Near white text */
+
+  /* Card & Surface Colors - Layered dark interface */
+  --card: 224 71.4% 4.1%; /* Zinc 950 - Dark cards */
+  --card-foreground: 210 20% 98%; /* Light text on dark cards */
+
+  /* Interactive Elements - Dark mode borders and inputs */
+  --border: 215 27.9% 16.9%; /* Zinc 800 - Visible borders */
+  --input: 215 27.9% 16.9%; /* Zinc 800 - Input backgrounds */
+  --ring: 216 12.2% 83.9%; /* Blue 300 - Softer focus ring */
+
+  /* Muted Content - Dark mode secondary content */
+  --muted: 215 27.9% 16.9%; /* Zinc 800 - Muted backgrounds */
+  --muted-foreground: 217.9 10.6% 64.9%; /* Zinc 400 - Muted text */
+
+  /* Primary Brand Color - Brighter for dark mode */
+  --primary: 217.2 91.2% 59.8%; /* Blue 400 - Brighter primary */
+  --primary-foreground: 222.2 84% 4.9%; /* Dark text on bright primary */
+  --primary-hover: 217.2 91.2% 53.8%; /* Blue 500 - Darker for hover in dark mode */
+
+  /* Secondary Brand Color - Brighter violet for dark mode */
+  --secondary: 263.4 70% 50.4%; /* Violet 500 - Adjusted for dark */
+  --secondary-foreground: 210 40% 98%; /* Light text on secondary */
+
+  /* Status Colors - Dark mode compatible */
+  --success: 158.1 64.4% 51.6%; /* #10B981 - Emerald 500 (same) */
+  --success-foreground: 0 0% 100%; /* White text on success */
+
+  --warning: 43.3 96.4% 56.3%; /* #F59E0B - Amber 500 (same) */
+  --warning-foreground: 0 0% 100%; /* White text on warning */
+
+  --destructive: 0 84.2% 60.2%; /* #EF4444 - Red 500 (same) */
+  --destructive-foreground: 210 40% 98%; /* White text on error */
+
+  /* Accent Colors - Dark mode accents */
+  --accent: 215 27.9% 16.9%; /* Zinc 800 - Dark accent */
+  --accent-foreground: 210 20% 98%; /* Light text on accent */
+
+  /* Popover & Modal Colors - Dark elevated surfaces */
+  --popover: 224 71.4% 4.1%; /* Zinc 950 - Dark popovers */
+  --popover-foreground: 210 20% 98%; /* Light text in popovers */
+}
+
+/* ===== PREMIUM BASE LAYER STYLES ===== */
+@layer base {
+  /* Universal box-sizing and border colors */
+  * {
+    @apply border-border;
+  }
+
+  /* Premium body styling with Inter font */
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+
+    /* Premium font features */
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1,
+      "kern" 1;
+
+    /* Smooth text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Text rendering optimization */
+    text-rendering: optimizeLegibility;
+
+    /* Mobile safe areas */
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+  }
+
+  /* Premium typography hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight text-foreground;
+    line-height: 1.2;
+  }
+
+  h1 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+  h2 {
+    @apply text-2xl md:text-3xl lg:text-4xl;
+  }
+  h3 {
+    @apply text-xl md:text-2xl lg:text-3xl;
+  }
+  h4 {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+  h5 {
+    @apply text-base md:text-lg;
+  }
+  h6 {
+    @apply text-sm md:text-base;
+  }
+
+  /* Body text with premium spacing */
+  p {
+    @apply text-muted-foreground leading-relaxed;
+    margin-bottom: 1rem;
+  }
+
+  /* Links with premium interactions */
+  a {
+    @apply text-primary hover:text-primary/80 transition-colors;
+  }
+
+  /* Premium button reset */
+  button {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* Premium input styling */
+  input,
+  textarea,
+  select {
+    @apply outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-shadow;
+  }
+
+  /* Tabular numbers for prices and specifications */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Premium scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40;
+  }
+
+  /* Focus visible improvements */
+  .focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2;
+  }
+
+  /* Selection styling */
+  ::selection {
+    @apply bg-primary/10 text-primary;
+  }
+}
+
+/* ===== PREMIUM COMPONENT STYLES ===== */
+@layer components {
+  /* Premium gradient backgrounds for hero sections and CTAs */
+  .bg-gradient-premium {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  }
+
+  /* Premium glass morphism effect */
+  .glass-morphism {
+    @apply bg-card/80 backdrop-blur-xl border border-border/50;
+  }
+
+  /* Premium card styling */
+  .card-premium {
+    @apply bg-card border border-border shadow-soft rounded-xl p-6 transition-all duration-300 hover:shadow-medium;
+  }
+
+  /* Status indicator styles */
+  .status-success {
+    @apply bg-success/10 text-success border border-success/20 rounded-lg px-3 py-1 text-sm font-medium;
+  }
+
+  .status-warning {
+    @apply bg-warning/10 text-warning border border-warning/20 rounded-lg px-3 py-1 text-sm font-medium;
+  }
+
+  .status-error {
+    @apply bg-destructive/10 text-destructive border border-destructive/20 rounded-lg px-3 py-1 text-sm font-medium;
+  }
+
+  /* Premium button variants */
+  .btn-premium {
+    @apply bg-gradient-premium text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-strong transition-all duration-300 hover:scale-[1.02];
+  }
+
+  /* Premium text styles */
+  .text-premium-strong {
+    @apply text-foreground font-semibold;
+  }
+
+  .text-premium-muted {
+    @apply text-muted-foreground;
+  }
+
+  /* Price and number styling with tabular nums */
+  .price,
+  .spec-number {
+    @apply tabular-nums font-semibold;
+  }
+}
+
+/* ===== PREMIUM UTILITY CLASSES ===== */
+@layer utilities {
+  /* Animation utilities */
+  .animate-premium-fade {
+    animation: fadeIn 300ms ease-out;
+  }
+
+  .animate-premium-slide {
+    animation: slideUp 300ms ease-out;
+  }
+
+  /* Premium spacing utilities */
+  .space-premium > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1.5rem;
+  }
+
+  /* Premium container max-widths */
+  .container-premium {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Print utilities */
+  @media print {
+    .print-hidden {
+      display: none !important;
+    }
+  }
 }
 
 /*
  * Dark mode color tokens
- * Using Zinc scale with adjusted primary for better contrast
+ * Using darker teal variants for dark mode
  */
 .dark {
-  /* Base colors - Dark mode using Zinc scale */
-  --background: 240 10% 3.9%; /* Zinc 950 background */
+  /* Base colors - Dark mode using darker teal */
+  --background: 205 65% 15%; /* Very dark teal background */
   --foreground: 0 0% 98%; /* Near white text */
 
   /* Card and surface colors */
-  --card: 240 10% 3.9%; /* Zinc 950 for cards */
+  --card: 205 55% 18%; /* Slightly lighter dark teal for cards */
   --card-foreground: 0 0% 98%; /* Near white for card text */
 
   /* Border and input colors */
-  --border: 240 3.7% 15.9%; /* Zinc 800 for borders */
-  --input: 240 3.7% 15.9%; /* Zinc 800 for inputs */
-  --ring: 217.2 91.2% 59.8%; /* Lighter blue for dark mode focus */
+  --border: 205 45% 25%; /* Medium dark teal for borders */
+  --input: 205 45% 25%; /* Medium dark teal for inputs */
+  --ring: 205 65% 45%; /* Lighter teal for dark mode focus */
 
   /* Muted colors */
-  --muted: 240 3.7% 15.9%; /* Zinc 800 for muted backgrounds */
-  --muted-foreground: 240 5% 64.9%; /* Zinc 400 for muted text */
+  --muted: 205 55% 22%; /* Dark teal for muted backgrounds */
+  --muted-foreground: 205 25% 65%; /* Light teal for muted text */
 
-  /* Primary color - Lighter blue for dark mode */
+  /* Primary color - Keeping blue accent for visibility */
   --primary: 217.2 91.2% 59.8%; /* Blue 400 for better dark contrast */
   --primary-foreground: 222.2 84% 4.9%; /* Very dark blue for primary text */
 
   /* Secondary colors */
-  --secondary: 240 3.7% 15.9%; /* Zinc 800 for secondary backgrounds */
+  --secondary: 205 50% 25%; /* Dark teal for secondary backgrounds */
   --secondary-foreground: 0 0% 98%; /* Near white for secondary text */
 
   /* Destructive colors */
@@ -85,11 +338,11 @@
   --destructive-foreground: 0 0% 98%; /* Near white for destructive text */
 
   /* Accent colors */
-  --accent: 240 3.7% 15.9%; /* Zinc 800 for accents */
+  --accent: 205 50% 25%; /* Dark teal for accents */
   --accent-foreground: 0 0% 98%; /* Near white for accent text */
 
   /* Popover colors */
-  --popover: 240 10% 3.9%; /* Zinc 950 for popovers */
+  --popover: 205 55% 18%; /* Dark teal for popovers */
   --popover-foreground: 0 0% 98%; /* Near white for popover text */
 }
 
@@ -289,5 +542,53 @@
     padding-right: env(safe-area-inset-right);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
+  }
+
+  /* Design System Utilities */
+
+  /* Tabular numbers for consistent number alignment */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tight headings with improved line-height */
+  .heading-tight {
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  /* Soft shadow system */
+  .shadow-soft {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .shadow-medium {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-strong {
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Hover and press transitions */
+  .transition-smooth {
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-1px);
+  }
+
+  .press-down:active {
+    transform: translateY(1px);
+  }
+
+  /* Rounded 2xl as default for cards */
+  .card-rounded {
+    border-radius: 1.5rem; /* 24px - rounded-2xl */
   }
 }

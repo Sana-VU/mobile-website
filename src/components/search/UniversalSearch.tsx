@@ -123,7 +123,7 @@ export default function UniversalSearch({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="pl-12 pr-32 h-14 text-lg bg-white dark:bg-neutral-900 border-2 border-neutral-200 dark:border-neutral-700 focus:border-blue-500 dark:focus:border-blue-400"
+            className="pl-12 pr-32 h-14 text-lg bg-card border-2 border-border focus:border-primary focus:ring-primary"
           />
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">
             <Button
@@ -151,7 +151,7 @@ export default function UniversalSearch({
 
         {/* Search Suggestions */}
         {searchQuery && searchSuggestions.length > 0 && (
-          <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg">
+          <div className="absolute top-full left-0 right-0 z-50 mt-1 bg-popover border border-border rounded-lg shadow-lg">
             {searchSuggestions.slice(0, 5).map((suggestion, index) => (
               <button
                 key={index}
@@ -192,7 +192,7 @@ export default function UniversalSearch({
 
       {/* Advanced Filters */}
       {showFilters && (
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-6 mb-6">
+        <div className="bg-card border border-border rounded-lg p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold">Advanced Filters</h3>
             <div className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export default function UniversalSearch({
                         category: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-input focus:ring-2 focus:ring-primary"
                   >
                     <option value="">Select category</option>
                     <option value="flagship">Flagship</option>
@@ -243,7 +243,7 @@ export default function UniversalSearch({
                     onChange={(e) =>
                       setFilters((prev) => ({ ...prev, brand: e.target.value }))
                     }
-                    className="w-full px-3 py-2 border border-neutral-200 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-border rounded-lg bg-input focus:ring-2 focus:ring-primary"
                   >
                     <option value="">Select brand</option>
                     <option value="apple">Apple</option>

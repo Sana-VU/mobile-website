@@ -32,13 +32,13 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:bg-neutral-950/95 dark:supports-[backdrop-filter]:bg-neutral-950/60 safe-area-top">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 safe-area-left safe-area-right">
+    <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-[#006A67]/95 backdrop-blur supports-[backdrop-filter]:bg-[#006A67]/90 dark:border-zinc-800 dark:bg-[#004d4a]/95 dark:supports-[backdrop-filter]:bg-[#004d4a]/90">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-xl font-bold text-transparent">
+              <div className="bg-gradient-to-r from-white to-zinc-100 bg-clip-text text-xl font-bold text-transparent">
                 WhatMobile
               </div>
             </Link>
@@ -56,10 +56,8 @@ export function Header() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    "px-3 py-2 text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400",
-                    isActive
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-neutral-700 dark:text-neutral-300"
+                    "px-3 py-2 text-sm font-medium transition-colors hover:text-white/90",
+                    isActive ? "text-white font-semibold" : "text-white/80"
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
@@ -73,13 +71,13 @@ export function Header() {
           <div className="hidden md:flex flex-1 justify-center px-6">
             <form onSubmit={handleSearch} className="w-full max-w-lg">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                 <Input
                   type="search"
                   placeholder="Search phones, brands..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 w-full"
+                  className="pl-10 w-full border-zinc-300 bg-white/90 focus:border-white focus:ring-white dark:border-zinc-600 dark:bg-zinc-800/50"
                 />
               </div>
             </form>
@@ -93,7 +91,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden"
+              className="md:hidden text-white hover:bg-white/20 hover:text-white"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-menu"
@@ -112,13 +110,13 @@ export function Header() {
         <div className="md:hidden pb-4">
           <form onSubmit={handleSearch}>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
               <Input
                 type="search"
                 placeholder="Search phones, brands..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 w-full"
+                className="pl-10 w-full border-zinc-300 bg-white/90 focus:border-white focus:ring-white dark:border-zinc-600 dark:bg-zinc-800/50"
               />
             </div>
           </form>
@@ -129,7 +127,7 @@ export function Header() {
       {mobileMenuOpen && (
         <div
           id="mobile-menu"
-          className="md:hidden border-t bg-white dark:bg-neutral-950"
+          className="md:hidden border-t border-white/20 bg-[#006A67] dark:border-zinc-600 dark:bg-[#004d4a]"
         >
           <div className="px-4 py-2 space-y-1">
             {navigation.map((item) => {
@@ -144,8 +142,8 @@ export function Header() {
                   className={cn(
                     "block px-3 py-2 text-base font-medium rounded-md transition-colors",
                     isActive
-                      ? "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400"
-                      : "text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                      ? "bg-white/20 text-white font-semibold"
+                      : "text-white/80 hover:bg-white/10 hover:text-white"
                   )}
                   aria-current={isActive ? "page" : undefined}
                   onClick={() => setMobileMenuOpen(false)}
