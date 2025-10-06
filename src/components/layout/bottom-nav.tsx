@@ -1,1 +1,0 @@
-export { BottomNav } from "@/components/ui/bottom-nav";
