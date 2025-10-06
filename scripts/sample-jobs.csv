@@ -1,0 +1,4 @@
+title,company,type,categories,location.city,location.region,location.country,remote,postedAt,expiresAt,tags,featured,source.name,source.url,source.publishedOn,applyUrl,applyEmail,description
+Junior Web Developer,Systems Limited,Full-time,IT|Engineering,Lahore,Punjab,Pakistan,false,2024-04-01,,react|javascript,false,Dawn,https://epaper.dawn.com,2024-03-31,,careers@systemsltd.com,"Build UI components for enterprise apps"
+Assistant Director,Pakistan Software Export Board,Full-time,Govt,Islamabad,ICT,Pakistan,false,2024-04-02,,management|policy,true,Jang,https://e.jang.com.pk,2024-03-30,https://pseb.org.pk/apply,,"Oversee export initiatives"
+Data Analyst,Meezan Bank,Full-time,IT|Banking,Karachi,Sindh,Pakistan,true,2024-04-03,,sql|bi,false,FPSC,,2024-03-29,,jobs@meezanbank.com,"Analyse banking data"
